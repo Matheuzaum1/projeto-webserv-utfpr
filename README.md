@@ -3,7 +3,7 @@
 Sistema de gerenciamento de eventos desenvolvido para o projeto de extensão da UTFPR. 
  
 ## Integrantes do Grupo 
-- Nome do Aluno 1 (RA: xxxxx) 
+- Matheus Henrique Rosendo Medeiros (RA 2605970)
 - Nome do Aluno 2 (RA: xxxxx) 
  
 ## Descrição 
