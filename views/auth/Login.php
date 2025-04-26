@@ -33,7 +33,7 @@ if (isset($_COOKIE['user_token'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <?php include('views/common/header.php'); ?>
+    <?php include(__DIR__ . '/../common/Header.php'); ?>
 
     <div class="container mt-5">
         <h2>Login</h2>
@@ -51,7 +51,7 @@ if (isset($_COOKIE['user_token'])) {
         <p class="mt-3">Ainda não tem uma conta? <a href="register.php">Cadastre-se</a></p>
     </div>
 
-    <?php include('views/common/footer.php'); ?>
+    <?php include(__DIR__ . '/../common/Footer.php'); ?>
 </body>
 </html>
 <?php
