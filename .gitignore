@@ -1,6 +1,54 @@
-/vendor/ 
-/node_modules/ 
-/.env 
-*.log 
-/.idea/ 
-/.vscode/ 
+# Sistema de pastas do Git
+.git/
+
+# Configurações de IDEs (VSCode, PHPStorm, etc)
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Arquivos temporários do sistema
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+
+# Configurações específicas de SOs
+ehthumbs.db
+Desktop.ini
+
+# Pastas de upload temporário
+/uploads/tmp/
+/tmp/
+/cache/
+
+# Configurações locais de ambiente
+.env
+.env.local
+.env.*.local
+
+# Banco de dados SQLite local (caso use)
+*.sqlite
+*.sqlite3
+
+# Pasta de dependências (se usar Composer no futuro)
+vendor/
+
+# Arquivos de backup (auto-salvamento de editores)
+*~
+
+# Node.js (caso use alguma ferramenta frontend tipo npm para Tailwind/Bootstrap futuramente)
+node_modules/
+package-lock.json
+
+# Arquivos do XAMPP/WAMP que podem surgir
+xamppfiles/
+wampfiles/
+htdocs/
+logs/
+
+# Evitar subir arquivos de configuração locais
+config/config-local.php
