@@ -12,7 +12,7 @@
 
     <div class="container mt-5">
         <h2>Login</h2>
-        <form action="/controllers/AuthController.php?action=login" method="POST">
+        <form action="/controllers/authController.php?action=login" method="POST">
             <div class="mb-3">
                 <label for="email" class="form-label">E-mail</label>
                 <input type="email" class="form-control" id="email" name="email" required>
@@ -30,3 +30,27 @@
 </body>
 </html>
 <?php
+$error = $_GET['erro'] ?? null;
+?>
+
+<div class="container mt-3">
+    <?php if ($error): ?>
+        <div class="alert alert-danger">
+            <?php
+            switch ($error) {
+                case 'campos_vazios':
+                    echo 'Por favor, preencha todos os campos.';
+                    break;
+                case 'senha_incorreta':
+                    echo 'Senha incorreta. Tente novamente.';
+                    break;
+                case 'usuario_nao_encontrado':
+                    echo 'Usuário não encontrado. Verifique o e-mail digitado.';
+                    break;
+                default:
+                    echo 'Ocorreu um erro. Tente novamente.';
+            }
+            ?>
+        </div>
+    <?php endif; ?>
+</div>

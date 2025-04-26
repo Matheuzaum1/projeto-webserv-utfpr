@@ -20,6 +20,6 @@ $usuario = $_SESSION['usuario'];
 
     <p>Tipo de usuário: <?php echo htmlspecialchars($usuario['tipo']); ?></p>
 
-    <a href="/controllers/AuthController.php?acao=logout">Sair</a>
+    <a href="/controllers/authController.php?acao=logout">Sair</a>
 </body>
 </html>

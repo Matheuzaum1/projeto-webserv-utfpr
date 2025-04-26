@@ -8,8 +8,15 @@ if ($acao === 'login') {
     $email = $_POST['email'] ?? '';
     $senha = $_POST['senha'] ?? '';
 
+    if (empty($email) || empty($senha)) {
+        header('Location: /views/auth/login.php?erro=campos_vazios');
+        exit;
+    }
+
+    $usuarioEncontrado = false;
     foreach ($usuarios as $usuario) {
         if ($usuario['email'] === $email) {
+            $usuarioEncontrado = true;
             if ($senha === $usuario['senha']) {
                 $_SESSION['usuario'] = [
                     'id' => $usuario['id'],
@@ -19,12 +26,17 @@ if ($acao === 'login') {
                 ];
                 header('Location: /index.php');
                 exit;
+            } else {
+                header('Location: /views/auth/login.php?erro=senha_incorreta');
+                exit;
             }
         }
     }
 
-    header('Location: /views/login.php?erro=1');
-    exit;
+    if (!$usuarioEncontrado) {
+        header('Location: /views/auth/login.php?erro=usuario_nao_encontrado');
+        exit;
+    }
 }
 
 if ($acao === 'logout') {

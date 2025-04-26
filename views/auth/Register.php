@@ -12,7 +12,7 @@
 
     <div class="container mt-5">
         <h2>Cadastro de Usuário</h2>
-        <form action="/controllers/AuthController.php?action=register" method="POST">
+        <form action="/controllers/authController.php?action=register" method="POST">
             <div class="mb-3">
                 <label for="name" class="form-label">Nome</label>
                 <input type="text" class="form-control" id="name" name="name" required>
