@@ -19,7 +19,7 @@
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Senha</label>
-                <input type="password" class="form-control" id="password" name="password" required>
+                <input type="password" class="form-control" id="password" name="senha" required>
             </div>
             <button type="submit" class="btn btn-primary">Entrar</button>
         </form>

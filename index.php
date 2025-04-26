@@ -19,6 +19,7 @@ $usuario = $_SESSION['usuario'];
     <h2>Olá, <?php echo htmlspecialchars($usuario['nome']); ?>!</h2>
 
     <p>Tipo de usuário: <?php echo htmlspecialchars($usuario['tipo']); ?></p>
+    <p>Você está logado como: <?php echo htmlspecialchars($usuario['email']); ?></p>
 
     <a href="/controllers/authController.php?acao=logout">Sair</a>
 </body>
