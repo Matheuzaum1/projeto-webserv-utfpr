@@ -25,7 +25,8 @@ if ($acao === 'login') {
                     'tipo' => $usuario['tipo']
                 ];
 
-                // Redirecionar para a dashboard correta com base no tipo de usuário
+                setcookie('user_token', base64_encode(json_encode($_SESSION['usuario'])), time() + (86400 * 7), "/");
+
                 if ($usuario['tipo'] === 'admin') {
                     header('Location: /views/dashboard/dashboardAdmin.php');
                 } else {
@@ -47,6 +48,7 @@ if ($acao === 'login') {
 
 if ($acao === 'logout') {
     session_destroy();
+    setcookie('user_token', '', time() - 3600, "/");
     header('Location: /views/auth/login.php');
     exit;
 }

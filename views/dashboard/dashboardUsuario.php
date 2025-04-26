@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'usuario') {
+    header('Location: /views/auth/login.php?erro=acesso_negado');
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

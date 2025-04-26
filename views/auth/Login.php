@@ -1,4 +1,29 @@
-<!-- /views/auth/login.php -->
+<?php
+session_start();
+
+if (isset($_SESSION['usuario'])) {
+    $tipo = $_SESSION['usuario']['tipo'];
+    if ($tipo === 'admin') {
+        header('Location: /views/dashboard/dashboardAdmin.php');
+    } else {
+        header('Location: /views/dashboard/dashboardUsuario.php');
+    }
+    exit;
+}
+
+if (isset($_COOKIE['user_token'])) {
+    $usuario = json_decode(base64_decode($_COOKIE['user_token']), true);
+    if ($usuario && isset($usuario['tipo'])) {
+        $_SESSION['usuario'] = $usuario;
+        if ($usuario['tipo'] === 'admin') {
+            header('Location: /views/dashboard/dashboardAdmin.php');
+        } else {
+            header('Location: /views/dashboard/dashboardUsuario.php');
+        }
+        exit;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -8,7 +33,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <?php include('../common/header.php'); ?>
+    <?php include('views/common/header.php'); ?>
 
     <div class="container mt-5">
         <h2>Login</h2>
@@ -26,7 +51,7 @@
         <p class="mt-3">Ainda não tem uma conta? <a href="register.php">Cadastre-se</a></p>
     </div>
 
-    <?php include('../common/footer.php'); ?>
+    <?php include('views/common/footer.php'); ?>
 </body>
 </html>
 <?php
@@ -46,6 +71,9 @@ $error = $_GET['erro'] ?? null;
                     break;
                 case 'usuario_nao_encontrado':
                     echo 'Usuário não encontrado. Verifique o e-mail digitado.';
+                    break;
+                case 'acesso_negado':
+                    echo 'Acesso negado, você não tem permissão para acessar esta página.';
                     break;
                 default:
                     echo 'Ocorreu um erro. Tente novamente.';
