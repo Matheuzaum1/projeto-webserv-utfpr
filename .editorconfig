@@ -1,0 +1,23 @@
+# EditorConfig ajuda a manter a consistência de código entre editores e IDEs.
+# Mais informações: https://editorconfig.org/
+
+# Definições globais para todos os arquivos
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# PHP: Usar 4 espaços para indentação
+[*.php]
+indent_size = 4
+
+# Arquivos HTML: Usar 2 espaços para indentação
+[*.{html,htm}]
+indent_size = 2
+
+# Arquivos Markdown: Usar 2 espaços para indentação
+[*.md]
+indent_size = 2
