@@ -130,12 +130,3 @@ Se você deseja colaborar com o desenvolvimento do projeto, por favor, siga o se
 ```
 
 ---
-
-### Como Utilizar o `README.md`
-
-- **Objetivo**: O `README.md` explica como o projeto está organizado, como configurar o ambiente, e o fluxo de trabalho com Git (branches, commits, merges).
-- **Fluxo de Trabalho Git**: A estrutura de branches e o processo de desenvolvimento estão documentados, permitindo que ambos (você e seu colega) sigam um padrão organizado ao longo do desenvolvimento.
-- **Requisitos do Projeto**: Explique os requisitos necessários para rodar o projeto (versão do PHP, dependências, banco de dados, etc.).
-- **Contribuições**: Quando for necessário adicionar novas funcionalidades ou corrigir bugs, siga o fluxo de criação de branches e pull requests.
-
-Essa estrutura ajudará a manter tudo organizado e facilitará o trabalho em equipe. Se precisar de mais alguma coisa, é só avisar! 😄
