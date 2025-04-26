@@ -1,11 +1,16 @@
-define('DB_HOST', 'localhost'); 
-define('DB_NAME', 'nome_do_banco'); 
-define('DB_USER', 'usuario'); 
-define('DB_PASS', 'senha'); 
- 
-try { 
-    $pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASS); 
-    $pdo-, PDO::ERRMODE_EXCEPTION); 
-} catch (PDOException $e) { 
-    die('Erro na conexão com o banco de dados: ' . $e-
-} 
+<?php
+// Configuração do banco de dados
+define('DB_SERVER', 'localhost');
+define('DB_USERNAME', 'root');
+define('DB_PASSWORD', '');
+define('DB_DATABASE', 'projeto_web');
+
+// Conexão com o banco de dados
+try {
+    $conn = new PDO("mysql:host=".DB_SERVER.";dbname=".DB_DATABASE, DB_USERNAME, DB_PASSWORD);
+    // Definir o modo de erro do PDO como exceção
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo "Erro na conexão: " . $e->getMessage();
+}
+?>
