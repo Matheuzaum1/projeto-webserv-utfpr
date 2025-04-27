@@ -1,4 +1,10 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
+    header('Location: /views/auth/login.php?erro=acesso_negado');
+    exit;
+}
 require_once __DIR__ . '/../../controllers/EventController.php';
 
 $eventId = $_GET['id'] ?? null;
@@ -15,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = $_POST['data'] ?? '';
     $max_participantes = intval($_POST['max_participantes'] ?? 0);
 
-    // Validação: Número máximo de participantes não pode ser menor que o número de participantes já inscritos
     if ($max_participantes < $evento['participantes']) {
         $erro = "O número máximo de participantes não pode ser menor do que o número de participantes já inscritos ({$evento['participantes']}).";
     } elseif (!empty($nome) && !empty($data) && $max_participantes > 0) {

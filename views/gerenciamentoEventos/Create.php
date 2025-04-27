@@ -1,15 +1,22 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
+    header('Location: /views/auth/login.php?erro=acesso_negado');
+    exit;
+}
+
 require_once __DIR__ . '/../../controllers/EventController.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = trim($_POST['nome'] ?? '');
     $data = trim($_POST['data'] ?? '');
-    $participantes = intval($_POST['participantes'] ?? 0);
+    $max_participantes = intval($_POST['max_participantes'] ?? 0);
 
-    if (!empty($nome) && !empty($data)) {
+    if (!empty($nome) && !empty($data) && $max_participantes > 0) {
         $eventController = new EventController();
         try {
-            $eventController->createEvent($nome, $data, $participantes);
+            $eventController->createEvent($nome, $data, $max_participantes);
             header('Location: /views/dashboard/dashboardAdmin.php?success=evento_criado');
             exit;
         } catch (Exception $e) {

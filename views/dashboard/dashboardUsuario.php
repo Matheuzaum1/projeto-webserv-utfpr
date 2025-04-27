@@ -93,5 +93,6 @@ $inscricoes = require_once __DIR__ . '/../../config/inscricoes.php';
             </tbody>
         </table>
     </div>
+    <?php include(__DIR__ . '/../common/Footer.php'); ?>
 </body>
 </html>

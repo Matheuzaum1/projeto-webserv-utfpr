@@ -59,4 +59,9 @@
     'usuario_id' => 5,
     'evento_id' => '5',
   ),
+  12 => 
+  array (
+    'usuario_id' => 3,
+    'evento_id' => '6',
+  ),
 );
