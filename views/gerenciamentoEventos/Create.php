@@ -2,15 +2,20 @@
 require_once __DIR__ . '/../../controllers/EventController.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nome = $_POST['nome'] ?? '';
-    $data = $_POST['data'] ?? '';
-    $participantes = $_POST['participantes'] ?? 0;
+    error_log('Formulário enviado para criar evento.');
+    $nome = trim($_POST['nome'] ?? '');
+    $data = trim($_POST['data'] ?? '');
+    $participantes = intval($_POST['participantes'] ?? 0);
 
     if (!empty($nome) && !empty($data)) {
         $eventController = new EventController();
-        $eventController->createEvent($nome, $data, $participantes);
-        header('Location: /views/dashboard/dashboardAdmin.php');
-        exit;
+        try {
+            $eventController->createEvent($nome, $data, $participantes);
+            header('Location: /views/dashboard/dashboardAdmin.php?success=evento_criado');
+            exit;
+        } catch (Exception $e) {
+            $erro = 'Erro ao criar o evento: ' . $e->getMessage();
+        }
     } else {
         $erro = 'Preencha todos os campos obrigatórios!';
     }
@@ -29,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if (isset($erro)): ?>
         <p style="color: red;"><?php echo $erro; ?></p>
     <?php endif; ?>
-    <form method="POST">
+    <form method="POST" action="">
         <label for="nome">Nome do Evento:</label>
         <input type="text" id="nome" name="nome" required><br>
 

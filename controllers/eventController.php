@@ -23,6 +23,7 @@ class EventController {
     }
 
     public function createEvent($nome, $data, $participantes) {
+        error_log('Método createEvent chamado com os dados: Nome=' . $nome . ', Data=' . $data . ', Participantes=' . $participantes);
         $novoEvento = [
             'id' => count($this->eventos) + 1,
             'nome' => $nome,
