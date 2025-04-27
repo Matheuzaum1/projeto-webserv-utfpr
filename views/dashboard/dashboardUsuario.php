@@ -5,83 +5,55 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'usuario') 
     header('Location: /views/auth/login.php?erro=acesso_negado');
     exit;
 }
+
+// Exemplo de eventos disponíveis
+$eventos = [
+    ['id' => 1, 'nome' => 'Workshop de PHP', 'data' => '2025-05-01'],
+    ['id' => 2, 'nome' => 'Palestra sobre IA', 'data' => '2025-05-10'],
+    ['id' => 3, 'nome' => 'Hackathon UTFPR', 'data' => '2025-06-15']
+];
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Usuário</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-        .header {
-            background-color: #007bff;
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
-        .sidebar {
-            width: 200px;
-            background-color: #343a40;
-            color: white;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            padding: 20px;
-        }
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            margin: 10px 0;
-        }
-        .sidebar a:hover {
-            text-decoration: underline;
-        }
-        .content {
-            margin-left: 220px;
-            padding: 20px;
-        }
-        .card {
-            background: white;
-            border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+    <title>Dashboard do Usuário</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="header">
-        <h1>Bem-vindo à Dashboard</h1>
-    </div>
-    <div class="sidebar">
-        <h3>Menu</h3>
-        <a href="#">Início</a>
-        <a href="#">Perfil</a>
-        <a href="#">Configurações</a>
-        <a href="#">Sair</a>
-    </div>
-    <div class="content">
-        <h2>Visão Geral</h2>
-        <div class="card">
-            <h3>Usuários Ativos</h3>
-            <p>150</p>
-        </div>
-        <div class="card">
-            <h3>Novas Mensagens</h3>
-            <p>23</p>
-        </div>
-        <div class="card">
-            <h3>Notificações</h3>
-            <p>5</p>
-        </div>
+    <div class="container mt-5">
+        <h1>Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
+        <a href="/controllers/authController.php?acao=logout" class="btn btn-danger mt-3">Sair</a>
+
+        <h2 class="mt-5">Eventos Disponíveis</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Data</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($eventos as $evento): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($evento['nome']); ?></td>
+                        <td><?php echo htmlspecialchars($evento['data']); ?></td>
+                        <td>
+                            <form method="POST" action="/controllers/eventController.php" style="display: inline;">
+                                <input type="hidden" name="evento_id" value="<?php echo htmlspecialchars($evento['id']); ?>">
+                                <button type="submit" class="btn btn-primary btn-sm">Inscrever-se</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <h2 class="mt-5">Meus Eventos</h2>
+        <p>Você ainda não está participando de nenhum evento.</p>
     </div>
 </body>
 </html>

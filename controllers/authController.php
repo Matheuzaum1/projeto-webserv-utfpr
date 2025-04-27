@@ -2,7 +2,7 @@
 session_start();
 require_once __DIR__ . '/../config/usuarios.php';
 
-$acao = $_POST['acao'] ?? $_GET['action'] ?? null;
+$acao = $_POST['acao'] ?? $_GET['action'] ?? $_GET['acao'] ?? null;
 
 if ($acao === 'login') {
     $email = $_POST['email'] ?? '';
