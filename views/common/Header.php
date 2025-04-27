@@ -1,4 +1,3 @@
-<!-- /views/common/header.php -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">Projeto Web UTFPR</a>
     <div class="collapse navbar-collapse">

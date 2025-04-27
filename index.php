@@ -1,25 +1,28 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['usuario'])) {
-    header('Location: /views/auth/login.php');
+if (isset($_SESSION['usuario'])) {
+    $tipo = $_SESSION['usuario']['tipo'];
+    if ($tipo === 'admin') {
+        header('Location: /views/dashboard/dashboardAdmin.php');
+    } else {
+        header('Location: /views/dashboard/dashboardUsuario.php');
+    }
     exit;
 }
 
-$usuario = $_SESSION['usuario'];
-?>
+if (isset($_COOKIE['user_token'])) {
+    $usuario = json_decode(base64_decode($_COOKIE['user_token']), true);
+    if ($usuario && isset($usuario['tipo'])) {
+        $_SESSION['usuario'] = $usuario;
+        if ($usuario['tipo'] === 'admin') {
+            header('Location: /views/dashboard/dashboardAdmin.php');
+        } else {
+            header('Location: /views/dashboard/dashboardUsuario.php');
+        }
+        exit;
+    }
+}
 
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Bem-vindo - Gerenciador de Eventos</title>
-</head>
-<body>
-    <h2>Olá, <?php echo htmlspecialchars($usuario['nome']); ?>!</h2>
-
-    <p>Tipo de usuário: <?php echo htmlspecialchars($usuario['tipo']); ?></p>
-
-    <a href="/controllers/authController.php?acao=logout">Sair</a>
-</body>
-</html>
+header('Location: /views/auth/login.php');
+exit;

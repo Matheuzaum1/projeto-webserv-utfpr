@@ -2,7 +2,7 @@
 session_start();
 require_once __DIR__ . '/../config/usuarios.php';
 
-$acao = $_POST['acao'] ?? $_GET['acao'] ?? null;
+$acao = $_POST['acao'] ?? $_GET['action'] ?? null;
 
 if ($acao === 'login') {
     $email = $_POST['email'] ?? '';
@@ -24,7 +24,14 @@ if ($acao === 'login') {
                     'email' => $usuario['email'],
                     'tipo' => $usuario['tipo']
                 ];
-                header('Location: /index.php');
+
+                setcookie('user_token', base64_encode(json_encode($_SESSION['usuario'])), time() + (86400 * 7), "/");
+
+                if ($usuario['tipo'] === 'admin') {
+                    header('Location: /views/dashboard/dashboardAdmin.php');
+                } else {
+                    header('Location: /views/dashboard/dashboardUsuario.php');
+                }
                 exit;
             } else {
                 header('Location: /views/auth/login.php?erro=senha_incorreta');
@@ -41,6 +48,7 @@ if ($acao === 'login') {
 
 if ($acao === 'logout') {
     session_destroy();
+    setcookie('user_token', '', time() - 3600, "/");
     header('Location: /views/auth/login.php');
     exit;
 }
