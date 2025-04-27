@@ -104,19 +104,38 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
 
     <script>
         function createEvent() {
-            alert('Função para criar evento');
+            window.location.href = '/views/gerenciamentoEventos/Create.php';
         }
 
         function deleteEvent() {
-            alert('Função para excluir evento');
+            const eventId = prompt('Digite o ID do evento que deseja excluir:');
+            if (eventId) {
+                fetch(`/controllers/EventController.php?action=delete&id=${eventId}`, {
+                    method: 'POST'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Evento excluído com sucesso!');
+                        location.reload();
+                    } else {
+                        alert('Erro ao excluir o evento.');
+                    }
+                });
+            }
         }
 
         function modifyEvent() {
-            alert('Função para modificar evento');
+            const eventId = prompt('Digite o ID do evento que deseja modificar:');
+            if (eventId) {
+                window.location.href = `/views/gerenciamentoEventos/Edit.php?id=${eventId}`;
+            }
         }
 
         function readEvent() {
-            alert('Função para ler evento');
+            const eventId = prompt('Digite o ID do evento que deseja visualizar:');
+            if (eventId) {
+                window.location.href = `/views/gerenciamentoEventos/Details.php?id=${eventId}`;
+            }
         }
 
         function logout() {
