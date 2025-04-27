@@ -20,12 +20,24 @@ $inscricoes = require_once __DIR__ . '/../../config/inscricoes.php';
     <link rel="stylesheet" href="/public/css/style.css?v=1.0">
 </head>
 <body>
-    <?php include(__DIR__ . '/../common/Header.php'); ?>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Projeto Web UTFPR</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a href="/index.php?action=logout" class="btn btn-danger">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
 
-    <main class="flex-grow-1">
-        <div class="container mt-5">
-            <h1 class="text-center">Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
-            <a href="/index.php?action=logout" class="btn btn-danger mt-3">Logout</a>
+<main class="flex-grow-1">
+    <div class="container mt-5">
+        <h1 class="text-center">Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
 
         <h2 class="mt-5">Eventos Disponíveis</h2>
 
@@ -116,6 +128,8 @@ $inscricoes = require_once __DIR__ . '/../../config/inscricoes.php';
             </tbody>
         </table>
     </div>
-    <?php include(__DIR__ . '/../common/Footer.php'); ?>
+</main>
+
+<?php include(__DIR__ . '/../common/Footer.php'); ?>
 </body>
 </html>
