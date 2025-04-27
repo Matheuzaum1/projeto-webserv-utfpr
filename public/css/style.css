@@ -93,3 +93,19 @@ table tr:nth-child(even) {
     display: flex;
     justify-content: flex-start;
 }
+
+.btn.btn-danger.mt-3 {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn.btn-danger.mt-3:hover {
+    background-color: #c82333;
+}

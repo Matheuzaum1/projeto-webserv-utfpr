@@ -13,12 +13,19 @@ if (!$evento) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = $_POST['nome'] ?? '';
     $data = $_POST['data'] ?? '';
-    $participantes = $_POST['participantes'] ?? 0;
+    $max_participantes = intval($_POST['max_participantes'] ?? 0);
 
-    if (!empty($nome) && !empty($data)) {
-        $eventController->updateEvent($eventId, $nome, $data, $participantes);
-        header('Location: /views/dashboard/dashboardAdmin.php');
-        exit;
+    // Validação: Número máximo de participantes não pode ser menor que o número de participantes já inscritos
+    if ($max_participantes < $evento['participantes']) {
+        $erro = "O número máximo de participantes não pode ser menor do que o número de participantes já inscritos ({$evento['participantes']}).";
+    } elseif (!empty($nome) && !empty($data) && $max_participantes > 0) {
+        try {
+            $eventController->updateEvent($eventId, $nome, $data, $max_participantes);
+            header('Location: /views/dashboard/dashboardAdmin.php?success=evento_atualizado');
+            exit;
+        } catch (Exception $e) {
+            $erro = 'Erro ao atualizar o evento: ' . $e->getMessage();
+        }
     } else {
         $erro = 'Preencha todos os campos obrigatórios!';
     }
@@ -53,8 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="mb-3">
-                <label for="participantes" class="form-label">Número de Participantes:</label>
-                <input type="number" id="participantes" name="participantes" class="form-control" value="<?php echo htmlspecialchars($evento['participantes']); ?>" min="0">
+                <label for="max_participantes" class="form-label">Número Máximo de Participantes:</label>
+                <input type="number" id="max_participantes" name="max_participantes" class="form-control" value="<?php echo htmlspecialchars($evento['max_participantes']); ?>" min="1" required>
             </div>
 
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>

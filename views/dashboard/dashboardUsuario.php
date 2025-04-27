@@ -20,7 +20,7 @@ $eventos = require_once __DIR__ . '/../../config/eventos.php';
 <body>
     <div class="container mt-5">
         <h1 class="text-center">Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
-        <a href="/index.php?action=logout" class="btn btn-danger mt-3" style="font-size: 1rem; padding: 10px 20px; border-radius: 5px;">Sair</a>
+        <a href="/index.php?action=logout" class="btn btn-danger mt-3">Logout</a>
 
         <h2 class="mt-5">Eventos Disponíveis</h2>
         <table class="table table-striped">
@@ -28,6 +28,7 @@ $eventos = require_once __DIR__ . '/../../config/eventos.php';
                 <tr>
                     <th>Nome</th>
                     <th>Data</th>
+                    <th>Vagas Disponíveis</th>
                     <th>Ação</th>
                 </tr>
             </thead>
@@ -37,18 +38,24 @@ $eventos = require_once __DIR__ . '/../../config/eventos.php';
                         <td><?php echo htmlspecialchars($evento['nome']); ?></td>
                         <td><?php echo htmlspecialchars($evento['data']); ?></td>
                         <td>
-                            <form method="POST" action="/controllers/eventController.php" style="display: inline;">
-                                <input type="hidden" name="evento_id" value="<?php echo htmlspecialchars($evento['id']); ?>">
-                                <button type="submit" class="btn btn-primary btn-sm" style="font-size: 0.9rem; padding: 8px 15px; border-radius: 5px;">Inscrever-se</button>
-                            </form>
+                            <?php
+                            $vagasDisponiveis = $evento['max_participantes'] - $evento['participantes'];
+                            echo $vagasDisponiveis > 0 ? $vagasDisponiveis : 'Esgotado';
+                            ?>
+                        </td>
+                        <td>
+                            <?php if ($vagasDisponiveis > 0): ?>
+                                <form method="POST" action="/controllers/eventController.php?action=register&id=<?php echo htmlspecialchars($evento['id']); ?>" style="display: inline;">
+                                    <button type="submit" class="btn btn-primary btn-sm">Inscrever-se</button>
+                                </form>
+                            <?php else: ?>
+                                <button class="btn btn-secondary btn-sm" disabled>Esgotado</button>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
-
-        <h2 class="mt-5">Meus Eventos</h2>
-        <p>Você ainda não está participando de nenhum evento.</p>
     </div>
 </body>
 </html>

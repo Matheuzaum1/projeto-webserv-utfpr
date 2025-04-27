@@ -1,10 +1,26 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
+    if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
+        http_response_code(403);
+        echo "Acesso negado. Apenas administradores podem realizar esta ação.";
+        exit;
+    }
+
+    $eventController = new EventController();
+    $eventController->deleteEvent($_GET['id']);
+    http_response_code(200);
+    echo "Evento deletado com sucesso.";
+    exit;
+}
 require_once __DIR__ . '/../../controllers/EventController.php';
 
 $eventController = new EventController();
 $eventos = $eventController->listEvents();
 
-session_start();
 
 if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
     header('Location: /views/auth/login.php?erro=acesso_negado');
@@ -54,6 +70,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
                     <th>Nome</th>
                     <th>Data</th>
                     <th>Número de Participantes</th>
+                    <th>Máximo de Participantes</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -61,9 +78,10 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
                 <?php foreach ($eventos as $evento): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($evento['id']); ?></td>
-                        <td><?php echo htmlspecialchars($evento['nome']); ?></td>
-                        <td><?php echo htmlspecialchars($evento['data']); ?></td>
-                        <td><?php echo htmlspecialchars($evento['participantes']); ?></td>
+                        <td><?php echo htmlspecialchars(htmlspecialchars($evento['nome'])); ?></td>
+                        <td><?php echo htmlspecialchars(htmlspecialchars($evento['data'])); ?></td>
+                        <td><?php echo htmlspecialchars(htmlspecialchars($evento['participantes'])); ?></td>
+                        <td><?php echo htmlspecialchars($evento['max_participantes']); ?></td>
                         <td>
                             <div class="btn-group">
                                 <a href="/views/gerenciamentoEventos/Edit.php?id=<?php echo $evento['id']; ?>" class="btn btn-warning btn-sm" style="font-size: 0.9rem; padding: 8px 15px; border-radius: 5px;">Editar</a>

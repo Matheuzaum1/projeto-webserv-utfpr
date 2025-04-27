@@ -2,12 +2,12 @@
 $acao = $_POST['acao'] ?? $_GET['acao'] ?? '';
 
 session_set_cookie_params([
-    'lifetime' => 0, // Sessão expira ao fechar o navegador
+    'lifetime' => 0,
     'path' => '/',
     'domain' => '',
-    'secure' => isset($_SERVER['HTTPS']), // Apenas HTTPS
-    'httponly' => true, // Apenas acessível pelo servidor
-    'samesite' => 'Strict' // Evita envio em requisições cross-site
+    'secure' => isset($_SERVER['HTTPS']),
+    'httponly' => true,
+    'samesite' => 'Strict'
 ]);
 session_start();
 
@@ -35,7 +35,6 @@ class AuthController {
                         'tipo' => $usuario['tipo']
                     ];
 
-                    // Adicionar cookie persistente para login
                     setcookie('user_token', base64_encode(json_encode($_SESSION['usuario'])), time() + (86400 * 30), '/', '', isset($_SERVER['HTTPS']), true);
 
                     if ($usuario['tipo'] === 'admin') {
@@ -57,14 +56,47 @@ class AuthController {
         }
     }
 
+    public function register() {
+        echo 'entrou';
+        $usuarios = require __DIR__ . '/../config/usuarios.php';
+
+        $nome = trim($_POST['nome'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $senha = trim($_POST['senha'] ?? '');
+
+        if (empty($nome) || empty($email) || empty($senha)) {
+            header('Location: /views/auth/register.php?erro=campos_vazios');
+            exit;
+        }
+
+        foreach ($usuarios as $usuario) {
+            if ($usuario['email'] === $email) {
+                header('Location: /views/auth/register.php?erro=email_ja_cadastrado');
+                exit;
+            }
+        }
+
+        $novoUsuario = [
+            'id' => count($usuarios) + 1,
+            'nome' => $nome,
+            'email' => $email,
+            'senha' => $senha,
+            'tipo' => 'usuario'
+        ];
+
+        $usuarios[] = $novoUsuario;
+
+        if (file_put_contents(__DIR__ . '/../config/usuarios.php', '<?php return ' . var_export($usuarios, true) . ';') === false) {
+            header('Location: /views/auth/register.php?erro=erro_ao_salvar');
+            exit;
+        }
+
+        header('Location: /views/auth/login.php?success=usuario_cadastrado');
+        exit;
+    }
     public function logout() {
-        // Remover cookie persistente
         setcookie('user_token', '', time() - 3600, '/', '', isset($_SERVER['HTTPS']), true);
-
-        // Destruir sessão
         session_destroy();
-
-        // Redirecionar para a página de login
         header('Location: /views/auth/Login.php');
         exit;
     }
