@@ -6,12 +6,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'usuario') 
     exit;
 }
 
-// Exemplo de eventos disponíveis
-$eventos = [
-    ['id' => 1, 'nome' => 'Workshop de PHP', 'data' => '2025-05-01'],
-    ['id' => 2, 'nome' => 'Palestra sobre IA', 'data' => '2025-05-10'],
-    ['id' => 3, 'nome' => 'Hackathon UTFPR', 'data' => '2025-06-15']
-];
+$eventos = require_once __DIR__ . '/../../config/eventos.php';
 ?>
 
 <!DOCTYPE html>
