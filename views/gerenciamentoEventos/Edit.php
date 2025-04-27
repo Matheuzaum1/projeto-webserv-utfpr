@@ -31,23 +31,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Evento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Editar Evento</h1>
-    <?php if (isset($erro)): ?>
-        <p style="color: red;"><?php echo $erro; ?></p>
-    <?php endif; ?>
-    <form method="POST">
-        <label for="nome">Nome do Evento:</label>
-        <input type="text" id="nome" name="nome" value="<?php echo $evento['nome']; ?>" required><br>
+    <div class="container mt-5">
+        <h1 class="mb-4">Editar Evento</h1>
+        <?php if (isset($erro)): ?>
+            <div class="alert alert-danger">
+                <?php echo htmlspecialchars($erro); ?>
+            </div>
+        <?php endif; ?>
+        <form method="POST" class="bg-light p-4 rounded shadow-sm">
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome do Evento:</label>
+                <input type="text" id="nome" name="nome" class="form-control" value="<?php echo htmlspecialchars($evento['nome']); ?>" required>
+            </div>
 
-        <label for="data">Data:</label>
-        <input type="date" id="data" name="data" value="<?php echo $evento['data']; ?>" required><br>
+            <div class="mb-3">
+                <label for="data" class="form-label">Data:</label>
+                <input type="date" id="data" name="data" class="form-control" value="<?php echo htmlspecialchars($evento['data']); ?>" required>
+            </div>
 
-        <label for="participantes">Número de Participantes:</label>
-        <input type="number" id="participantes" name="participantes" value="<?php echo $evento['participantes']; ?>" min="0"><br>
+            <div class="mb-3">
+                <label for="participantes" class="form-label">Número de Participantes:</label>
+                <input type="number" id="participantes" name="participantes" class="form-control" value="<?php echo htmlspecialchars($evento['participantes']); ?>" min="0">
+            </div>
 
-        <button type="submit">Salvar Alterações</button>
-    </form>
+            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            <a href="/views/dashboard/dashboardAdmin.php" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
 </body>
 </html>
