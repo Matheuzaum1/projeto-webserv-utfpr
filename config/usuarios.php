@@ -71,4 +71,12 @@
     'senha' => '123',
     'tipo' => 'usuario',
   ),
+  9 => 
+  array (
+    'id' => 10,
+    'nome' => 'Ze',
+    'email' => 'Ze@gmail.com',
+    'senha' => '12345',
+    'tipo' => 'usuario',
+  ),
 );
