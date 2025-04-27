@@ -17,7 +17,7 @@ Este sistema web permite o cadastro, edição e gerenciamento de eventos, utiliz
  
 ## Tecnologias Utilizadas 
 - PHP 8+ 
-- MySQL ou MariaDB 
+- MySQL ou MariaDB (Nao implementado ainda)
 - HTML5, CSS3 
 - (Opcional: Bootstrap para estilização) 
  
@@ -30,8 +30,10 @@ Este sistema web permite o cadastro, edição e gerenciamento de eventos, utiliz
 Leia o arquivo `docs/instalacao.md` para ver os passos de instalação e configuração. 
  
 ## Organização do Projeto 
-- `app/`: Contém a lógica do sistema (controllers, models, views). 
-- `public/`: Arquivos acessíveis pelo navegador (index.php, css, js). 
-- `config/`: Arquivos de configuração. 
-- `README.md`: Este arquivo. 
-- `.gitignore`: Arquivos e pastas ignorados no repositório. 
+- `controllers/`: Contém os controladores responsáveis pela lógica do sistema.
+- `models/`: Contém os modelos que representam os dados e regras de negócio.
+- `views/`: Contém as visualizações (arquivos HTML e PHP).
+- `public/`: Arquivos acessíveis pelo navegador (index.php, css, js).
+- `config/`: Arquivos de configuração.
+- `README.md`: Este arquivo.
+- `.gitignore`: Arquivos e pastas ignorados no repositório.

@@ -51,7 +51,7 @@ if (!$evento) {
             <p><strong>ID:</strong> <?php echo htmlspecialchars($evento['id']); ?></p>
             <p><strong>Nome:</strong> <?php echo htmlspecialchars($evento['nome']); ?></p>
             <p><strong>Data:</strong> <?php echo htmlspecialchars($evento['data']); ?></p>
-            <p><strong>Número de Participantes:</strong> <?php echo htmlspecialchars($evento['participantes']); ?></p>
+            <p><strong>Número Máximo de Participantes:</strong> <?php echo htmlspecialchars($evento['max_participantes']); ?></p>
             <a href="/views/dashboard/dashboardAdmin.php" class="btn btn-secondary btn-back">Voltar</a>
         </div>
     </div>

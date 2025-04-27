@@ -1,95 +1,99 @@
-/* Estilos globais para o projeto */
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* Base styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f8f9fa;
 }
 
-.container {
-    width: 90%;
-    margin: 20px auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-    text-align: center;
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
     color: #343a40;
 }
 
-.actions {
-    display: flex;
-    justify-content: space-between;
+p, a, button {
+    font-weight: 400;
+    color: #495057;
+}
+
+/* Buttons */
+button, .btn {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+button:hover, .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Cards */
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    background-color: #fff;
     margin-bottom: 20px;
 }
 
-.actions a, .actions button {
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    text-align: center;
-    cursor: pointer;
+/* Animations */
+.animated {
+    animation-duration: 1s;
+    animation-fill-mode: both;
 }
 
-.actions a:hover, .actions button:hover {
-    background-color: #0056b3;
+.fade-in {
+    animation-name: fadeIn;
 }
 
-table {
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Scroll Animations */
+[data-aos] {
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+[data-aos="fade-up"] {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+[data-aos="fade-up"].aos-animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Footer styles */
+footer {
+    position: relative;
+    bottom: 0;
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+    background-color: #f8f9fa;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px 0;
 }
 
-table th, table td {
-    border: 1px solid #dee2e6;
-    padding: 12px;
-    text-align: left;
+/* Ensure footer stays at the bottom */
+html {
+    height: 100%;
 }
-
-table th {
-    background-color: #007BFF;
-    color: white;
-}
-
-table tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-.btn-sm {
-    padding: 5px 10px;
-    font-size: 0.875rem;
-    border-radius: 4px;
-    margin-right: 5px;
-}
-
-.btn-warning {
-    background-color: #ffc107;
-    color: #212529;
-    border: none;
-}
-
-.btn-warning:hover {
-    background-color: #e0a800;
-}
-
-.btn-info {
-    background-color: #17a2b8;
-    color: #fff;
-    border: none;
-}
-
-.btn-info:hover {
-    background-color: #138496;
-}
-
-.btn-group {
+body {
     display: flex;
-    justify-content: flex-start;
+    flex-direction: column;
+    min-height: 100%;
+    margin: 0;
+}
+main {
+    flex: 1;
 }
