@@ -35,7 +35,6 @@ $eventos = $eventController->listEvents();
 
     <div class="container mt-5">
         <h1 class="text-center">Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
-        <a href="/index.php?action=logout" class="btn btn-danger mt-3" style="font-size: 1rem; padding: 10px 20px; border-radius: 5px;">Logout</a>
         <?php if (isset($_GET['success'])): ?>
     <div class="alert alert-success">
         <?php
@@ -113,8 +112,12 @@ $eventos = $eventController->listEvents();
             </tbody>
         </table>
     </div>
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">&copy; 2025 Projeto Webserv UTFPR</span>
+        </div>
+    </footer>
 </body>
-<?php include(__DIR__ . '/../common/Footer.php'); ?>
 <script>
     function handleAction(event) {
         const action = document.getElementById('action').value;

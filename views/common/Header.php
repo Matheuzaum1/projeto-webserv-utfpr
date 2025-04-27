@@ -6,6 +6,21 @@
         AOS.init();
     });
 </script>
+<style>
+    .logout-btn {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
+
+    .logout-btn:hover {
+        background-color: #c82333;
+    }
+</style>
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="container">
@@ -15,8 +30,14 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/views/auth/login.php">Login</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/views/auth/register.php">Registrar</a></li>
+                    <?php if (isset($_SESSION['usuario'])): ?>
+                        <li class="nav-item">
+                            <a href="/index.php?action=logout" class="logout-btn">Logout</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item"><a class="nav-link" href="/views/auth/login.php">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/views/auth/register.php">Registrar</a></li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
