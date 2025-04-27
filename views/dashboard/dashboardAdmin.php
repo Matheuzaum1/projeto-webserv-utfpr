@@ -21,31 +21,33 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
     <link rel="stylesheet" href="/public/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Admin Dashboard</h1>
-        <div class="actions">
-            <a href="/views/gerenciamentoEventos/Create.php">Criar Evento</a>
-            <button onclick="logout()">Logout</button>
-        </div>
+    <div class="container mt-5">
+        <h1 class="text-center">Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
+        <a href="/index.php?action=logout" class="btn btn-danger mt-3" style="font-size: 1rem; padding: 10px 20px; border-radius: 5px;">Sair</a>
 
-        <div class="quick-actions">
-            <h3>Ações Rápidas</h3>
-            <form id="quickActionForm" onsubmit="handleQuickAction(event)">
-                <label for="eventId">ID do Evento:</label>
-                <input type="number" id="eventId" name="eventId" required>
-
-                <select id="actionType" name="actionType" required>
-                    <option value="edit">Editar</option>
-                    <option value="details">Detalhes</option>
-                    <option value="delete">Excluir</option>
-                </select>
-
-                <button type="submit">Executar</button>
+        <div class="card mb-4 p-4 shadow-sm" style="border-radius: 10px; background-color: #f8f9fa;">
+            <h2 class="text-center" style="color: #343a40;">Gerenciar Evento</h2>
+            <form method="GET" action="/views/gerenciamentoEventos/" class="row g-3">
+                <div class="col-md-6">
+                    <label for="eventId" class="form-label" style="font-weight: bold;">ID do Evento:</label>
+                    <input type="number" id="eventId" name="id" class="form-control" placeholder="Digite o ID do evento" style="border: 2px solid #ced4da; border-radius: 8px; padding: 10px;" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="action" class="form-label" style="font-weight: bold;">Ação:</label>
+                    <select id="action" name="action" class="form-select" style="border: 2px solid #ced4da; border-radius: 8px; padding: 10px;" required>
+                        <option value="Edit.php">Editar</option>
+                        <option value="Details.php">Detalhes</option>
+                        <option value="delete">Excluir</option>
+                    </select>
+                </div>
+                <div class="col-12 text-center">
+                    <button type="submit" class="btn btn-primary mt-3" style="padding: 12px 25px; font-size: 1rem; border-radius: 8px;">Executar</button>
+                </div>
             </form>
         </div>
 
-        <h2>Lista de Eventos</h2>
-        <table class="table">
+        <h2 class="mt-5">Gerenciamento de Eventos</h2>
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -58,14 +60,14 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
             <tbody>
                 <?php foreach ($eventos as $evento): ?>
                     <tr>
-                        <td><?php echo $evento['id']; ?></td>
-                        <td><?php echo $evento['nome']; ?></td>
-                        <td><?php echo $evento['data']; ?></td>
-                        <td><?php echo $evento['participantes']; ?></td>
+                        <td><?php echo htmlspecialchars($evento['id']); ?></td>
+                        <td><?php echo htmlspecialchars($evento['nome']); ?></td>
+                        <td><?php echo htmlspecialchars($evento['data']); ?></td>
+                        <td><?php echo htmlspecialchars($evento['participantes']); ?></td>
                         <td>
                             <div class="btn-group">
-                                <a href="/views/gerenciamentoEventos/Edit.php?id=<?php echo $evento['id']; ?>" class="btn btn-warning btn-sm">Editar</a>
-                                <a href="/views/gerenciamentoEventos/Details.php?id=<?php echo $evento['id']; ?>" class="btn btn-info btn-sm">Detalhes</a>
+                                <a href="/views/gerenciamentoEventos/Edit.php?id=<?php echo $evento['id']; ?>" class="btn btn-warning btn-sm" style="font-size: 0.9rem; padding: 8px 15px; border-radius: 5px;">Editar</a>
+                                <a href="/views/gerenciamentoEventos/Details.php?id=<?php echo $evento['id']; ?>" class="btn btn-info btn-sm" style="font-size: 0.9rem; padding: 8px 15px; border-radius: 5px;">Detalhes</a>
                             </div>
                         </td>
                     </tr>
@@ -73,40 +75,5 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
             </tbody>
         </table>
     </div>
-
-    <script>
-        function handleQuickAction(event) {
-            event.preventDefault();
-            const eventId = document.getElementById('eventId').value;
-            const actionType = document.getElementById('actionType').value;
-
-            if (actionType === 'edit') {
-                window.location.href = `/views/gerenciamentoEventos/Edit.php?id=${eventId}`;
-            } else if (actionType === 'details') {
-                window.location.href = `/views/gerenciamentoEventos/Details.php?id=${eventId}`;
-            } else if (actionType === 'delete') {
-                if (confirm('Tem certeza que deseja excluir este evento?')) {
-                    fetch(`/controllers/EventController.php?action=delete&id=${eventId}`, {
-                        method: 'POST'
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            alert('Evento excluído com sucesso!');
-                            location.reload();
-                        } else {
-                            alert('Erro ao excluir o evento.');
-                        }
-                    });
-                }
-            }
-        }
-
-        function logout() {
-            fetch('/controllers/authController.php?action=logout')
-                .then(() => {
-                    window.location.href = '/index.php';
-                });
-        }
-    </script>
 </body>
 </html>

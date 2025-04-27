@@ -19,8 +19,8 @@ $eventos = require_once __DIR__ . '/../../config/eventos.php';
 </head>
 <body>
     <div class="container mt-5">
-        <h1>Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
-        <a href="/controllers/authController.php?action=logout" class="btn btn-danger mt-3">Sair</a>
+        <h1 class="text-center">Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
+        <a href="/index.php?action=logout" class="btn btn-danger mt-3" style="font-size: 1rem; padding: 10px 20px; border-radius: 5px;">Sair</a>
 
         <h2 class="mt-5">Eventos Disponíveis</h2>
         <table class="table table-striped">
@@ -39,7 +39,7 @@ $eventos = require_once __DIR__ . '/../../config/eventos.php';
                         <td>
                             <form method="POST" action="/controllers/eventController.php" style="display: inline;">
                                 <input type="hidden" name="evento_id" value="<?php echo htmlspecialchars($evento['id']); ?>">
-                                <button type="submit" class="btn btn-primary btn-sm">Inscrever-se</button>
+                                <button type="submit" class="btn btn-primary btn-sm" style="font-size: 0.9rem; padding: 8px 15px; border-radius: 5px;">Inscrever-se</button>
                             </form>
                         </td>
                     </tr>
