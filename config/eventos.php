@@ -28,7 +28,7 @@
     'id' => 4,
     'nome' => 'Curso de Machine Learning',
     'data' => '2025-09-15',
-    'participantes' => 108,
+    'participantes' => 109,
     'max_participantes' => 150,
   ),
   4 => 
@@ -36,15 +36,7 @@
     'id' => 5,
     'nome' => 'Hackathon UTFPR',
     'data' => '2025-05-01',
-    'participantes' => 0,
-    'max_participantes' => 200,
-  ),
-  5 => 
-  array (
-    'id' => 6,
-    'nome' => 'Festa da uva',
-    'data' => '2025-05-02',
     'participantes' => 1,
-    'max_participantes' => 100,
+    'max_participantes' => 200,
   ),
 );

@@ -9,7 +9,18 @@ class EventController {
     }
 
     public function listEvents() {
-        return Evento::getAll();
+        $inscricoes = include __DIR__ . '/../config/inscricoes.php';
+        if (!is_array($inscricoes)) {
+            $inscricoes = [];
+        }
+
+        foreach ($this->eventos as &$evento) {
+            $evento['participantes'] = count(array_filter($inscricoes, function($inscricao) use ($evento) {
+                return $inscricao['evento_id'] == $evento['id'];
+            }));
+        }
+
+        return $this->eventos;
     }
 
     public function getEventById($id) {
@@ -40,6 +51,17 @@ class EventController {
         }
 
         $this->saveEvents();
+
+        $inscricoes = include __DIR__ . '/../config/inscricoes.php';
+        if (!is_array($inscricoes)) {
+            $inscricoes = [];
+        }
+
+        $inscricoes = array_filter($inscricoes, function($inscricao) use ($id) {
+            return $inscricao['evento_id'] != $id;
+        });
+
+        file_put_contents(__DIR__ . '/../config/inscricoes.php', '<?php return ' . var_export($inscricoes, true) . ';');
     }
 
     public function updateEvent($id, $nome, $data, $max_participantes) {
@@ -80,20 +102,24 @@ if (session_status() === PHP_SESSION_NONE) {
 if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
     if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
         http_response_code(403);
-        echo "Acesso negado. Apenas administradores podem realizar esta ação.";
+        header('Location: /views/auth/login.php?erro=acesso_negado');
         exit;
     }
 
     $eventController = new EventController();
-    $eventController->deleteEvent($_GET['id']);
-    http_response_code(200);
-    echo "Evento deletado com sucesso.";
-    exit;
+    try {
+        $eventController->deleteEvent($_GET['id']);
+        header('Location: /views/dashboard/dashboardAdmin.php?success=evento_deletado');
+        exit;
+    } catch (Exception $e) {
+        header('Location: /views/dashboard/dashboardAdmin.php?error=' . urlencode($e->getMessage()));
+        exit;
+    }
 }
 if (isset($_GET['action']) && $_GET['action'] === 'register' && isset($_GET['id'])) {
     if (!isset($_SESSION['usuario'])) {
         http_response_code(403);
-        echo "Acesso negado. Faça login para se inscrever.";
+        header('Location: /views/auth/login.php?erro=acesso_negado');
         exit;
     }
 
