@@ -59,13 +59,14 @@ class EventController {
             if ($evento['id'] == $id) {
                 if ($evento['participantes'] < $evento['max_participantes']) {
                     $evento['participantes']++;
+                    $this->saveEvents();
+                    return;
                 } else {
                     throw new Exception('Número máximo de participantes atingido.');
                 }
-                break;
             }
         }
-        $this->saveEvents();
+        throw new Exception('Evento não encontrado.');
     }
 
     private function saveEvents() {

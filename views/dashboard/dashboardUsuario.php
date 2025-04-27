@@ -7,6 +7,7 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'usuario') 
 }
 
 $eventos = require_once __DIR__ . '/../../config/eventos.php';
+$inscricoes = require_once __DIR__ . '/../../config/inscricoes.php';
 ?>
 
 <!DOCTYPE html>
@@ -26,43 +27,71 @@ $eventos = require_once __DIR__ . '/../../config/eventos.php';
             <h1 class="text-center">Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
             <a href="/index.php?action=logout" class="btn btn-danger mt-3">Logout</a>
 
-            <h2 class="mt-5">Eventos Disponíveis</h2>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Data</th>
-                        <th>Vagas Disponíveis</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($eventos as $evento): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($evento['nome']); ?></td>
-                            <td><?php echo htmlspecialchars($evento['data']); ?></td>
-                            <td>
-                                <?php
-                                $vagasDisponiveis = $evento['max_participantes'] - $evento['participantes'];
-                                echo $vagasDisponiveis > 0 ? $vagasDisponiveis : 'Esgotado';
-                                ?>
-                            </td>
-                            <td>
-                                <?php if ($vagasDisponiveis > 0): ?>
-                                    <form method="POST" action="/controllers/eventController.php?action=register&id=<?php echo htmlspecialchars($evento['id']); ?>" style="display: inline;">
-                                        <button type="submit" class="btn btn-primary btn-sm">Inscrever-se</button>
-                                    </form>
-                                <?php else: ?>
-                                    <button class="btn btn-secondary btn-sm" disabled>Esgotado</button>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </main>
+        <h2 class="mt-5">Eventos Disponíveis</h2>
 
-    <?php include(__DIR__ . '/../common/Footer.php'); ?>
+        <?php if (isset($_GET['success'])): ?>
+            <div class="alert alert-success">
+                <?php
+                switch ($_GET['success']) {
+                    case 'inscricao_realizada':
+                        echo 'Inscrição realizada com sucesso!';
+                        break;
+                }
+                ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($_GET['error'])): ?>
+            <div class="alert alert-danger">
+                <?php echo htmlspecialchars($_GET['error']); ?>
+            </div>
+        <?php endif; ?>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Data</th>
+                    <th>Vagas Disponíveis</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($eventos as $evento): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($evento['nome']); ?></td>
+                        <td><?php echo htmlspecialchars($evento['data']); ?></td>
+                        <td>
+                            <?php
+                            $vagasDisponiveis = $evento['max_participantes'] - $evento['participantes'];
+                            echo $vagasDisponiveis > 0 ? $vagasDisponiveis : 'Esgotado';
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            $usuarioJaInscrito = false;
+                            foreach ($inscricoes as $inscricao) {
+                                if ($inscricao['usuario_id'] === $_SESSION['usuario']['id'] && $inscricao['evento_id'] == $evento['id']) {
+                                    $usuarioJaInscrito = true;
+                                    break;
+                                }
+                            }
+                            ?>
+
+                            <?php if ($usuarioJaInscrito): ?>
+                                <button class="btn btn-success btn-sm" disabled>Já inscrito</button>
+                            <?php elseif ($vagasDisponiveis > 0): ?>
+                                <form method="POST" action="/controllers/inscricaoController.php?id=<?php echo htmlspecialchars($evento['id']); ?>" style="display: inline;">
+                                    <button type="submit" class="btn btn-primary btn-sm">Inscrever-se</button>
+                                </form>
+                            <?php else: ?>
+                                <button class="btn btn-secondary btn-sm" disabled>Esgotado</button>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>

@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../../config/eventos.php';
+require_once __DIR__ . '/../config/eventos.php';
+require_once __DIR__ . '/../config/inscricoes.php';
 require_once __DIR__ . '/eventController.php';
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -30,18 +31,43 @@ if (!$evento) {
     exit;
 }
 
-if (!isset($_SESSION['inscricoes'])) {
-    $_SESSION['inscricoes'] = [];
+// Carregar as inscrições do arquivo
+$inscricoes = include __DIR__ . '/../config/inscricoes.php';
+
+// Verificar se o arquivo retornou um array válido
+if (!is_array($inscricoes)) {
+    $inscricoes = [];
 }
 
-if (in_array($eventoId, $_SESSION['inscricoes'])) {
-    header('Location: /views/dashboard/dashboardUsuario.php?error=voce_ja_esta_inscrito');
+// Verificar se o usuário já está inscrito no evento
+foreach ($inscricoes as $inscricao) {
+    if ($inscricao['usuario_id'] === $usuarioId && $inscricao['evento_id'] == $eventoId) {
+        header('Location: /views/dashboard/dashboardUsuario.php?error=voce_ja_esta_inscrito');
+        exit;
+    }
+}
+
+// Verificar se há vagas disponíveis no evento
+if ($evento['participantes'] >= $evento['max_participantes']) {
+    header('Location: /views/dashboard/dashboardUsuario.php?error=evento_lotado');
     exit;
 }
 
 try {
+    // Incrementar o número de participantes no evento
     $eventController->registerUser($eventoId);
-    $_SESSION['inscricoes'][] = $eventoId;
+
+    // Adicionar a inscrição ao array
+    $inscricoes[] = [
+        'usuario_id' => $usuarioId,
+        'evento_id' => $eventoId
+    ];
+
+    // Salvar as inscrições no arquivo
+    if (file_put_contents(__DIR__ . '/../config/inscricoes.php', '<?php return ' . var_export($inscricoes, true) . ';') === false) {
+        throw new Exception('Erro ao salvar a inscrição.');
+    }
+
     header('Location: /views/dashboard/dashboardUsuario.php?success=inscricao_realizada');
     exit;
 } catch (Exception $e) {

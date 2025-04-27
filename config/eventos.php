@@ -4,7 +4,7 @@
     'id' => 1,
     'nome' => 'Workshop de Desenvolvimento Web',
     'data' => '2025-05-15',
-    'participantes' => 113,
+    'participantes' => 127,
     'max_participantes' => 1000,
   ),
   1 => 
@@ -12,7 +12,7 @@
     'id' => 2,
     'nome' => 'Hackathon UTFPR',
     'data' => '2025-07-20',
-    'participantes' => 51,
+    'participantes' => 57,
     'max_participantes' => 120,
   ),
   2 => 
@@ -20,7 +20,7 @@
     'id' => 3,
     'nome' => 'Seminário de Inteligência Artificial',
     'data' => '2025-06-10',
-    'participantes' => 152,
+    'participantes' => 162,
     'max_participantes' => 200,
   ),
   3 => 
@@ -36,7 +36,7 @@
     'id' => 5,
     'nome' => 'Curso de Machine Learning',
     'data' => '2025-09-15',
-    'participantes' => 101,
+    'participantes' => 108,
     'max_participantes' => 150,
   ),
 );
