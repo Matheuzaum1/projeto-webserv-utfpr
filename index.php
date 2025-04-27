@@ -1,28 +1,31 @@
 <?php
-session_start();
+require_once __DIR__ . '/controllers/authController.php';
+require_once __DIR__ . '/controllers/eventController.php';
 
-if (isset($_SESSION['usuario'])) {
-    $tipo = $_SESSION['usuario']['tipo'];
-    if ($tipo === 'admin') {
-        header('Location: /views/dashboard/dashboardAdmin.php');
-    } else {
-        header('Location: /views/dashboard/dashboardUsuario.php');
-    }
-    exit;
+$action = $_GET['action'] ?? 'home';
+
+switch ($action) {
+    case 'login':
+        $authController = new AuthController();
+        $authController->login();
+        break;
+    case 'logout':
+        $authController = new AuthController();
+        $authController->logout();
+        break;
+    case 'listEvents':
+        $eventController = new EventController();
+        $eventController->listEvents();
+        break;
+    case 'createEvent':
+        $eventController = new EventController();
+        $eventController->createEvent();
+        break;
+    case 'deleteEvent':
+        $eventController = new EventController();
+        $eventController->deleteEvent($_GET['id'] ?? null);
+        break;
+    default:
+        header('Location: /views/auth/login.php');
+        break;
 }
-
-if (isset($_COOKIE['user_token'])) {
-    $usuario = json_decode(base64_decode($_COOKIE['user_token']), true);
-    if ($usuario && isset($usuario['tipo'])) {
-        $_SESSION['usuario'] = $usuario;
-        if ($usuario['tipo'] === 'admin') {
-            header('Location: /views/dashboard/dashboardAdmin.php');
-        } else {
-            header('Location: /views/dashboard/dashboardUsuario.php');
-        }
-        exit;
-    }
-}
-
-header('Location: /views/auth/login.php');
-exit;
