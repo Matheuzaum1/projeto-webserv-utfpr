@@ -1,24 +1,16 @@
 <?php
-require_once 'models/Evento.php'; 
+require_once __DIR__ . '/../config/eventos.php';
 
 class EventController {
-    private $evento;  
+    private $eventos;
 
-    public function __construct($db) {
-        $this->evento = new Evento($db);  
-    }
-
-    // Função para criar um novo evento
-    public function createEvent($name, $description, $date) {
-        $this->evento->name = $name;  
-        $this->evento->description = $description;
-        $this->evento->date = $date;
-        return $this->evento->create();  
+    public function __construct() {
+        $this->eventos = include __DIR__ . '/../config/eventos.php';
     }
 
     // Função para listar eventos
     public function listEvents() {
-        return $this->evento->read(); 
+        return $this->eventos;
     }
 }
 ?>
