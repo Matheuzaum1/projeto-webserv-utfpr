@@ -75,7 +75,7 @@ $eventos = require_once __DIR__ . '/../../config/eventos.php';
 <body>
     <div class="container mt-5">
         <h1>Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
-        <a href="/controllers/authController.php?acao=logout" class="btn btn-danger mt-3">Sair</a>
+        <a href="/controllers/authController.php?action=logout" class="btn btn-danger mt-3">Sair</a>
 
         <h2 class="mt-5">Eventos Disponíveis</h2>
         <table class="table table-striped">
