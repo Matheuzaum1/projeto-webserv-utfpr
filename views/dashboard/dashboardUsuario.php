@@ -47,6 +47,32 @@ $inscricoes = require_once __DIR__ . '/../../config/inscricoes.php';
             </div>
         <?php endif; ?>
 
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <label for="filter" class="form-label me-2">Filtrar por:</label>
+            <select id="filter" class="form-select w-auto" onchange="filterEvents()">
+                <option value="all">Todos</option>
+                <option value="inscrito">Inscritos</option>
+                <option value="disponivel">Disponíveis</option>
+                <option value="esgotado">Esgotados</option>
+            </select>
+        </div>
+
+        <script>
+            function filterEvents() {
+                const filter = document.getElementById('filter').value;
+                const rows = document.querySelectorAll('tbody tr');
+
+                rows.forEach(row => {
+                    const status = row.getAttribute('data-status');
+                    if (filter === 'all' || filter === status) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+        </script>
+
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -58,26 +84,23 @@ $inscricoes = require_once __DIR__ . '/../../config/inscricoes.php';
             </thead>
             <tbody>
                 <?php foreach ($eventos as $evento): ?>
-                    <tr>
+                    <?php
+                    $vagasDisponiveis = $evento['max_participantes'] - $evento['participantes'];
+                    $usuarioJaInscrito = false;
+                    foreach ($inscricoes as $inscricao) {
+                        if ($inscricao['usuario_id'] === $_SESSION['usuario']['id'] && $inscricao['evento_id'] == $evento['id']) {
+                            $usuarioJaInscrito = true;
+                            break;
+                        }
+                    }
+
+                    $status = $usuarioJaInscrito ? 'inscrito' : ($vagasDisponiveis > 0 ? 'disponivel' : 'esgotado');
+                    ?>
+                    <tr data-status="<?php echo $status; ?>">
                         <td><?php echo htmlspecialchars($evento['nome']); ?></td>
                         <td><?php echo htmlspecialchars($evento['data']); ?></td>
+                        <td><?php echo $vagasDisponiveis > 0 ? $vagasDisponiveis : 'Esgotado'; ?></td>
                         <td>
-                            <?php
-                            $vagasDisponiveis = $evento['max_participantes'] - $evento['participantes'];
-                            echo $vagasDisponiveis > 0 ? $vagasDisponiveis : 'Esgotado';
-                            ?>
-                        </td>
-                        <td>
-                            <?php
-                            $usuarioJaInscrito = false;
-                            foreach ($inscricoes as $inscricao) {
-                                if ($inscricao['usuario_id'] === $_SESSION['usuario']['id'] && $inscricao['evento_id'] == $evento['id']) {
-                                    $usuarioJaInscrito = true;
-                                    break;
-                                }
-                            }
-                            ?>
-
                             <?php if ($usuarioJaInscrito): ?>
                                 <button class="btn btn-success btn-sm" disabled>Já inscrito</button>
                             <?php elseif ($vagasDisponiveis > 0): ?>

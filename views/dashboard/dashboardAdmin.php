@@ -37,8 +37,25 @@ $eventos = $eventController->listEvents();
         <h1 class="text-center">Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
         <a href="/index.php?action=logout" class="btn btn-danger mt-3" style="font-size: 1rem; padding: 10px 20px; border-radius: 5px;">Logout</a>
         <?php if (isset($_GET['success'])): ?>
-    <br>
-    <?php endif; ?>
+    <div class="alert alert-success">
+        <?php
+        switch ($_GET['success']) {
+            case 'evento_deletado':
+                echo 'Evento deletado com sucesso!';
+                break;
+            case 'evento_criado':
+                echo 'Evento criado com sucesso!';
+                break;
+            case 'evento_atualizado':
+                echo 'Evento atualizado com sucesso!';
+                break;
+            default:
+                echo 'Operação realizada com sucesso!';
+                break;
+        }
+        ?>
+    </div>
+<?php endif; ?>
         <div class="d-flex justify-content-between align-items-center mt-4">
             <h2>Gerenciamento de Eventos</h2>
             <a href="/views/gerenciamentoEventos/Create.php" class="btn btn-success">Criar Evento</a>
@@ -64,24 +81,6 @@ $eventos = $eventController->listEvents();
                 </div>
             </form>
         </div>
-        <div class="alert alert-success">
-        <?php
-        switch ($_GET['success']) {
-            case 'evento_deletado':
-                echo 'Evento deletado com sucesso!';
-                break;
-            case 'evento_criado':
-                echo 'Evento criado com sucesso!';
-                break;
-            case 'evento_atualizado':
-                echo 'Evento atualizado com sucesso!';
-                break;
-            default:
-                echo 'Operação realizada com sucesso!';
-                break;
-        }
-        ?>
-    </div>
         <h2 class="mt-5">Lista de Eventos</h2>
         <table class="table table-striped">
             <thead>
