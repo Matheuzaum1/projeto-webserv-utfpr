@@ -1,3 +1,5 @@
+<?php include(__DIR__ . '/../common/Header.php'); ?>
+
 <?php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -34,8 +36,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="/public/css/style.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+        main {
+            flex: 1;
+        }
+    </style>
 </head>
 <body>
+<main>
     <div class="container mt-5">
         <h1 class="text-center">Login</h1>
         <?php if (isset($erro)): ?>
@@ -58,5 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Não tem uma conta? <a href="/views/auth/register.php">Registre-se</a>
         </p>
     </div>
+</main>
 </body>
 </html>
+
+<?php include(__DIR__ . '/../common/Footer.php'); ?>
