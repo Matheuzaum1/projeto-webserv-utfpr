@@ -12,10 +12,30 @@
         <h1 class="text-center">Registrar</h1>
         <?php if (isset($_GET['erro'])): ?>
             <div class="alert alert-danger">
-                <?php echo htmlspecialchars($_GET['erro']); ?>
+            <?php
+            switch ($_GET['erro']) {
+                case 'campos_vazios':
+                    echo 'Por favor, preencha todos os campos.';
+                    break;
+                case 'senha_incorreta':
+                    echo 'Senha incorreta. Tente novamente.';
+                    break;
+                case 'usuario_nao_encontrado':
+                    echo 'Usuário não encontrado. Verifique o e-mail digitado.';
+                    break;
+                case 'acesso_negado':
+                    echo 'Acesso negado, você não tem permissão para acessar esta página.';
+                    break;
+                case 'email_ja_cadastrado':
+                    echo 'Este e-mail já está cadastrado. Tente outro ou faça login.';
+                    break;
+                default:
+                    echo 'Ocorreu um erro. Tente novamente.';
+            }
+            ?>
             </div>
         <?php endif; ?>
-        <form method="POST" action="/controllers/authController.php?acao=register" class="mt-4">
+        <form method="POST" action="/index.php?action=register" class="mt-4">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome:</label>
                 <input type="text" id="nome" name="nome" class="form-control" required>

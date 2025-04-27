@@ -17,6 +17,10 @@ switch ($action) {
         $eventController = new EventController();
         $eventController->listEvents();
         break;
+    case 'register':
+        $authController = new AuthController();
+        $authController->register();
+        break;
     case 'createEvent':
         $eventController = new EventController();
         $eventController->createEvent();

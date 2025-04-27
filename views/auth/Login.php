@@ -56,6 +56,7 @@ if (isset($_COOKIE['user_token'])) {
 </html>
 <?php
 $error = $_GET['erro'] ?? null;
+$success = $_GET['success'] ?? null;
 ?>
 
 <div class="container mt-3">
@@ -75,8 +76,21 @@ $error = $_GET['erro'] ?? null;
                 case 'acesso_negado':
                     echo 'Acesso negado, você não tem permissão para acessar esta página.';
                     break;
+                case 'email_ja_cadastrado':
+                    echo 'Este e-mail já está cadastrado. Tente outro ou faça login.';
+                    break;
                 default:
                     echo 'Ocorreu um erro. Tente novamente.';
+            }
+            ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($success): ?>
+        <div class="alert alert-success">
+            <?php
+            if ($success === 'usuario_cadastrado') {
+                echo 'Usuário cadastrado com sucesso! Faça login para continuar.';
             }
             ?>
         </div>

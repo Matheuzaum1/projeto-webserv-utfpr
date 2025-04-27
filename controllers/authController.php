@@ -13,7 +13,7 @@ session_start();
 
 class AuthController {
     public function login() {
-        require_once __DIR__ . '/../config/usuarios.php';
+        $usuarios = require_once __DIR__ . '/../config/usuarios.php';
 
         $email = $_POST['email'] ?? '';
         $senha = $_POST['senha'] ?? '';
@@ -57,8 +57,7 @@ class AuthController {
     }
 
     public function register() {
-        echo 'entrou';
-        $usuarios = require __DIR__ . '/../config/usuarios.php';
+        $usuarios = require_once __DIR__ . '/../config/usuarios.php';
 
         $nome = trim($_POST['nome'] ?? '');
         $email = trim($_POST['email'] ?? '');
