@@ -25,6 +25,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erro = 'Credenciais inválidas. Tente novamente.';
     }
 }
+
+if (isset($_GET['erro'])) {
+    switch ($_GET['erro']) {
+        case 'acesso_negado':
+            $erro = 'Você não tem permissão para acessar esta página. Faça login primeiro.';
+            break;
+        case 'campos_vazios':
+            $erro = 'Preencha todos os campos.';
+            break;
+        case 'senha_incorreta':
+            $erro = 'Senha incorreta. Tente novamente.';
+            break;
+        case 'usuario_nao_encontrado':
+            $erro = 'Usuário não encontrado.';
+            break;
+        default:
+            $erro = 'Ocorreu um erro. Tente novamente.';
+            break;
+    }
+}
 ?>
 
 <!DOCTYPE html>
