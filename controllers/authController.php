@@ -17,11 +17,16 @@ class AuthController {
     public function login() {
         $usuarios = require_once __DIR__ . '/../config/usuarios.php';
 
-        $email = $_POST['email'] ?? '';
-        $senha = $_POST['senha'] ?? '';
+        $email = trim($_POST['email'] ?? '');
+        $senha = trim($_POST['senha'] ?? '');
 
+        // Validação dos inputs
         if (empty($email) || empty($senha)) {
             header('Location: /views/auth/login.php?erro=campos_vazios');
+            exit;
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            header('Location: /views/auth/login.php?erro=email_invalido');
             exit;
         }
 
@@ -65,11 +70,23 @@ class AuthController {
         $email = trim($_POST['email'] ?? '');
         $senha = trim($_POST['senha'] ?? '');
 
+        // Validação robusta dos inputs
         if (empty($nome) || empty($email) || empty($senha)) {
             header('Location: /views/auth/register.php?erro=campos_vazios');
             exit;
         }
-
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            header('Location: /views/auth/register.php?erro=email_invalido');
+            exit;
+        }
+        if (strlen($senha) < 6) {
+            header('Location: /views/auth/register.php?erro=senha_curta');
+            exit;
+        }
+        if (strlen($nome) < 3) {
+            header('Location: /views/auth/register.php?erro=nome_curto');
+            exit;
+        }
         foreach ($usuarios as $usuario) {
             if ($usuario['email'] === $email) {
                 header('Location: /views/auth/register.php?erro=email_ja_cadastrado');

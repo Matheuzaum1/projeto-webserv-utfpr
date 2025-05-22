@@ -3,8 +3,13 @@
 Sistema de gerenciamento de eventos desenvolvido para o projeto de extensão da UTFPR. 
  
 ## Integrantes do Grupo 
+<<<<<<< HEAD
+- Matheus Henrique Rosendo Medeiros (RA 2605970)
+- Lucas Daniel da Silva (RA 2605953) 
+=======
 - Matheus Henrique Rosendo Medeiros
 - Lucas Daniel da Silva
+>>>>>>> main
  
 ## Descrição 
 Este sistema web permite o cadastro, edição e gerenciamento de eventos, utilizando PHP 8+, seguindo o padrão MVC básico. 
