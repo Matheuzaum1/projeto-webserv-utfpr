@@ -27,7 +27,30 @@ class EventController {
         return Evento::getById($id);
     }
 
-    public function createEvent($nome, $data, $max_participantes) {
+    public function createEvent($nome = null, $data = null, $max_participantes = null) {
+        // Se os dados não vierem por parâmetro, tenta pegar do POST
+        if ($nome === null) $nome = trim($_POST['nome'] ?? '');
+        if ($data === null) $data = trim($_POST['data'] ?? '');
+        if ($max_participantes === null) $max_participantes = intval($_POST['max_participantes'] ?? 0);
+
+        // Validação dos inputs
+        if (empty($nome) || empty($data) || $max_participantes < 1) {
+            header('Location: /views/gerenciamentoEventos/Create.php?erro=campos_invalidos');
+            exit;
+        }
+        if (strlen($nome) < 3) {
+            header('Location: /views/gerenciamentoEventos/Create.php?erro=nome_curto');
+            exit;
+        }
+        if (!preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $data)) {
+            header('Location: /views/gerenciamentoEventos/Create.php?erro=data_invalida');
+            exit;
+        }
+        if ($max_participantes > 10000) {
+            header('Location: /views/gerenciamentoEventos/Create.php?erro=max_participantes_excedido');
+            exit;
+        }
+
         $novoEvento = [
             'id' => count($this->eventos) + 1,
             'nome' => $nome,
@@ -64,7 +87,25 @@ class EventController {
         file_put_contents(__DIR__ . '/../config/inscricoes.php', '<?php return ' . var_export($inscricoes, true) . ';');
     }
 
-    public function updateEvent($id, $nome, $data, $max_participantes) {
+    public function updateEvent($id, $nome = null, $data = null, $max_participantes = null) {
+        if ($nome === null) $nome = trim($_POST['nome'] ?? '');
+        if ($data === null) $data = trim($_POST['data'] ?? '');
+        if ($max_participantes === null) $max_participantes = intval($_POST['max_participantes'] ?? 0);
+
+        // Validação dos inputs
+        if (empty($nome) || empty($data) || $max_participantes < 1) {
+            throw new Exception('Preencha todos os campos obrigatórios!');
+        }
+        if (strlen($nome) < 3) {
+            throw new Exception('O nome do evento deve ter pelo menos 3 caracteres.');
+        }
+        if (!preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $data)) {
+            throw new Exception('Data inválida. Use o formato AAAA-MM-DD.');
+        }
+        if ($max_participantes > 10000) {
+            throw new Exception('Número máximo de participantes muito alto.');
+        }
+
         foreach ($this->eventos as &$evento) {
             if ($evento['id'] == $id) {
                 $evento['nome'] = $nome;
