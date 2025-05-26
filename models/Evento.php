@@ -1,59 +1,105 @@
 <?php
 class Evento {
-    private static $eventosFile = __DIR__ . '/../config/eventos.php';
+    private $id, $titulo, $descricao, $local, $dataHora, $duracao, $capacidade, $status, $categoria, $preco, $idAdmin;
 
-    public static function getAll() {
-        return include self::$eventosFile;
+    public function __construct($id = null, $titulo, $descricao, $local, $dataHora, $duracao, $capacidade, $status, $categoria, $preco, $idAdmin) {
+        $this->id = $id;
+        $this->titulo = $titulo;
+        $this->descricao = $descricao;
+        $this->local = $local;
+        $this->dataHora = $dataHora;
+        $this->duracao = $duracao;
+        $this->capacidade = $capacidade;
+        $this->status = $status;
+        $this->categoria = $categoria;
+        $this->preco = $preco;
+        $this->idAdmin = $idAdmin;
+    }
+    public function getId() {
+        return $this->id;
     }
 
-    public static function getById($id) {
-        $eventos = self::getAll();
-        foreach ($eventos as $evento) {
-            if ($evento['id'] == $id) {
-                return $evento;
-            }
-        }
-        return null;
+    public function getTitulo() {
+        return $this->titulo;
     }
 
-    public static function create($nome, $data, $participantes) {
-        $eventos = self::getAll();
-        $novoEvento = [
-            'id' => count($eventos) + 1,
-            'nome' => $nome,
-            'data' => $data,
-            'participantes' => $participantes
-        ];
-        $eventos[] = $novoEvento;
-        self::saveToFile($eventos);
+    public function getDescricao() {
+        return $this->descricao;
     }
 
-    public static function delete($id) {
-        $eventos = array_filter(self::getAll(), function($evento) use ($id) {
-            return $evento['id'] != $id;
-        });
-        $eventos = array_values($eventos);
-        foreach ($eventos as $index => &$evento) {
-            $evento['id'] = $index + 1;
-        }
-        self::saveToFile($eventos);
+    public function getLocal() {
+        return $this->local;
     }
 
-    public static function update($id, $nome, $data, $participantes) {
-        $eventos = self::getAll();
-        foreach ($eventos as &$evento) {
-            if ($evento['id'] == $id) {
-                $evento['nome'] = $nome;
-                $evento['data'] = $data;
-                $evento['participantes'] = $participantes;
-                break;
-            }
-        }
-        self::saveToFile($eventos);
+    public function getDataHora() {
+        return $this->dataHora;
     }
 
-    private static function saveToFile($eventos) {
-        $conteudo = '<?php return ' . var_export($eventos, true) . ';';
-        file_put_contents(self::$eventosFile, $conteudo);
+    public function getDuracao() {
+        return $this->duracao;
+    }
+
+    public function getCapacidade() {
+        return $this->capacidade;
+    }
+
+    public function getStatus() {
+        return $this->status;
+    }
+
+    public function getCategoria() {
+        return $this->categoria;
+    }
+
+    public function getPreco() {
+        return $this->preco;
+    }
+
+    public function getIdAdmin() {
+        return $this->idAdmin;
+    }
+
+    public function setId($id) {
+        $this->id = $id;
+    }
+
+    public function setTitulo($titulo) {
+        $this->titulo = $titulo;
+    }
+
+    public function setDescricao($descricao) {
+        $this->descricao = $descricao;
+    }
+
+    public function setLocal($local) {
+        $this->local = $local;
+    }
+
+    public function setDataHora($dataHora) {
+        $this->dataHora = $dataHora;
+    }
+
+    public function setDuracao($duracao) {
+        $this->duracao = $duracao;
+    }
+
+    public function setCapacidade($capacidade) {
+        $this->capacidade = $capacidade;
+    }
+
+    public function setStatus($status) {
+        $this->status = $status;
+    }
+
+    public function setCategoria($categoria) {
+        $this->categoria = $categoria;
+    }
+
+    public function setPreco($preco) {
+        $this->preco = $preco;
+    }
+
+    public function setIdAdmin($idAdmin) {
+        $this->idAdmin = $idAdmin;
     }
 }

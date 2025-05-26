@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $senha = $_POST['senha'];
 
-    if ($authController->login($email, $senha)) {
+    if ($authController->login()) {
         header('Location: /views/dashboard/dashboardUsuario.php');
         exit;
     } else {

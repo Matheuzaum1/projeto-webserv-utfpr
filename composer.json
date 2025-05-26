@@ -1,0 +1,15 @@
+{
+    "name": "lucas/projeto-webserv-utfpr",
+    "autoload": {
+        "classmap": [
+            "./"
+        ]
+    },
+    "authors": [
+        {
+            "name": "maluquismos",
+            "email": "heyj4ke@outlook.com"
+        }
+    ],
+    "require": {}
+}

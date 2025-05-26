@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $senha = $_POST['senha'];
 
-    if ($authController->register($nome, $email, $senha)) {
+    if ($authController->register()) {
         header('Location: /views/auth/login.php?success=registrado');
         exit;
     } else {
