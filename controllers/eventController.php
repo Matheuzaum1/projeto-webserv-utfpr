@@ -1,176 +1,170 @@
 <?php
-require_once __DIR__ . '/../models/Evento.php';
+
 
 class EventController {
-    private $eventos;
+    private $conn;
 
     public function __construct() {
-        $this->eventos = include __DIR__ . '/../config/eventos.php';
+        $this->conn = Conexao::get();
     }
 
     public function listEvents() {
-        $inscricoes = include __DIR__ . '/../config/inscricoes.php';
-        if (!is_array($inscricoes)) {
-            $inscricoes = [];
-        }
+        try {
+            $sql = "SELECT e.*, 
+                           (SELECT COUNT(*) FROM inscricao i WHERE i.id_evento = e.id) AS participantes 
+                    FROM evento e";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
+            $eventos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        foreach ($this->eventos as &$evento) {
-            $evento['participantes'] = count(array_filter($inscricoes, function($inscricao) use ($evento) {
-                return $inscricao['evento_id'] == $evento['id'];
-            }));
-        }
+            $eventList = [];
+            foreach ($eventos as $eventoData) {
+                $evento = new Evento(
+                    $eventoData['id'],
+                    $eventoData['titulo'],
+                    $eventoData['descricao'],
+                    $eventoData['local'],
+                    $eventoData['data_hora'],
+                    $eventoData['duracao'],
+                    $eventoData['capacidade'],
+                    $eventoData['status'],
+                    $eventoData['categoria'],
+                    $eventoData['preco'],
+                    $eventoData['organizador']
+                );
+                $eventList[] = $evento;
+            }
 
-        return $this->eventos;
+            return $eventList;
+        } catch (PDOException $e) {
+            throw new Exception("Erro ao listar eventos: " . $e->getMessage());
+        }
     }
 
     public function getEventById($id) {
-        return Evento::getById($id);
+        try {
+            $sql = "SELECT * FROM evento WHERE id = :id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+            $eventoData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$eventoData) {
+                throw new Exception('Evento não encontrado.');
+            }
+
+            return new Evento(
+                $eventoData['id'],
+                $eventoData['titulo'],
+                $eventoData['descricao'],
+                $eventoData['local'],
+                $eventoData['data_hora'],
+                $eventoData['duracao'],
+                $eventoData['capacidade'],
+                $eventoData['status'],
+                $eventoData['categoria'],
+                $eventoData['preco'],
+                $eventoData['organizador']
+            );
+        } catch (PDOException $e) {
+            throw new Exception("Erro ao buscar evento: " . $e->getMessage());
+        }
     }
 
-    public function createEvent($nome = null, $data = null, $max_participantes = null) {
-        // Se os dados não vierem por parâmetro, tenta pegar do POST
-        if ($nome === null) $nome = trim($_POST['nome'] ?? '');
-        if ($data === null) $data = trim($_POST['data'] ?? '');
-        if ($max_participantes === null) $max_participantes = intval($_POST['max_participantes'] ?? 0);
+    public function createEvent($titulo, $descricao, $local, $dataHora, $duracao, $capacidade, $categoria, $preco, $organizador) {
+        try {
+            $sql = "INSERT INTO evento (titulo, descricao, local, data_hora, duracao, capacidade, status, categoria, preco, organizador) 
+                    VALUES (:titulo, :descricao, :local, :data_hora, :duracao, :capacidade, 'ativo', :categoria, :preco, :organizador)";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':titulo', $titulo);
+            $stmt->bindParam(':descricao', $descricao);
+            $stmt->bindParam(':local', $local);
+            $stmt->bindParam(':data_hora', $dataHora);
+            $stmt->bindParam(':duracao', $duracao);
+            $stmt->bindParam(':capacidade', $capacidade);
+            $stmt->bindParam(':categoria', $categoria);
+            $stmt->bindParam(':preco', $preco);
+            $stmt->bindParam(':organizador', $organizador);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            throw new Exception("Erro ao criar evento: " . $e->getMessage());
+        }
+    }
 
-        // Validação dos inputs
-        if (empty($nome) || empty($data) || $max_participantes < 1) {
-            header('Location: /views/gerenciamentoEventos/Create.php?erro=campos_invalidos');
-            exit;
-        }
-        if (strlen($nome) < 3) {
-            header('Location: /views/gerenciamentoEventos/Create.php?erro=nome_curto');
-            exit;
-        }
-        if (!preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $data)) {
-            header('Location: /views/gerenciamentoEventos/Create.php?erro=data_invalida');
-            exit;
-        }
-        if ($max_participantes > 10000) {
-            header('Location: /views/gerenciamentoEventos/Create.php?erro=max_participantes_excedido');
-            exit;
-        }
+    public function updateEvent($id, $titulo, $descricao, $local, $dataHora, $duracao, $capacidade, $categoria, $preco) {
+        try {
+            $sql = "UPDATE evento 
+                    SET titulo = :titulo, descricao = :descricao, local = :local, data_hora = :data_hora, 
+                        duracao = :duracao, capacidade = :capacidade, categoria = :categoria, preco = :preco 
+                    WHERE id = :id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':titulo', $titulo);
+            $stmt->bindParam(':descricao', $descricao);
+            $stmt->bindParam(':local', $local);
+            $stmt->bindParam(':data_hora', $dataHora);
+            $stmt->bindParam(':duracao', $duracao);
+            $stmt->bindParam(':capacidade', $capacidade);
+            $stmt->bindParam(':categoria', $categoria);
+            $stmt->bindParam(':preco', $preco);
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
 
-        $novoEvento = [
-            'id' => count($this->eventos) + 1,
-            'nome' => $nome,
-            'data' => $data,
-            'participantes' => 0, 
-            'max_participantes' => $max_participantes,
-        ];
-        $this->eventos[] = $novoEvento;
-
-        $this->saveEvents();
+            if ($stmt->rowCount() === 0) {
+                throw new Exception('Evento não encontrado ou nenhuma alteração realizada.');
+            }
+        } catch (PDOException $e) {
+            throw new Exception("Erro ao atualizar evento: " . $e->getMessage());
+        }
     }
 
     public function deleteEvent($id) {
-        $this->eventos = array_filter($this->eventos, function($evento) use ($id) {
-            return $evento['id'] != $id;
-        });
+        try {
+            $this->conn->beginTransaction();
 
-        $this->eventos = array_values($this->eventos);
-        foreach ($this->eventos as $index => &$evento) {
-            $evento['id'] = $index + 1;
+            $sqlInscricao = "DELETE FROM inscricao WHERE id_evento = :id_evento";
+            $stmtInscricao = $this->conn->prepare($sqlInscricao);
+            $stmtInscricao->bindParam(':id_evento', $id);
+            $stmtInscricao->execute();
+
+            $sqlEvento = "DELETE FROM evento WHERE id = :id";
+            $stmtEvento = $this->conn->prepare($sqlEvento);
+            $stmtEvento->bindParam(':id', $id);
+            $stmtEvento->execute();
+
+            $this->conn->commit();
+        } catch (PDOException $e) {
+            $this->conn->rollBack();
+            throw new Exception("Erro ao excluir evento: " . $e->getMessage());
         }
-
-        $this->saveEvents();
-
-        $inscricoes = include __DIR__ . '/../config/inscricoes.php';
-        if (!is_array($inscricoes)) {
-            $inscricoes = [];
-        }
-
-        $inscricoes = array_filter($inscricoes, function($inscricao) use ($id) {
-            return $inscricao['evento_id'] != $id;
-        });
-
-        file_put_contents(__DIR__ . '/../config/inscricoes.php', '<?php return ' . var_export($inscricoes, true) . ';');
     }
 
-    public function updateEvent($id, $nome = null, $data = null, $max_participantes = null) {
-        if ($nome === null) $nome = trim($_POST['nome'] ?? '');
-        if ($data === null) $data = trim($_POST['data'] ?? '');
-        if ($max_participantes === null) $max_participantes = intval($_POST['max_participantes'] ?? 0);
+    public function registerUser($idEvento, $idUsuario) {
+        try {
+            $sqlEvento = "SELECT capacidade, 
+                                 (SELECT COUNT(*) FROM inscricao WHERE id_evento = :id_evento) AS inscritos 
+                          FROM evento WHERE id = :id_evento";
+            $stmtEvento = $this->conn->prepare($sqlEvento);
+            $stmtEvento->bindParam(':id_evento', $idEvento);
+            $stmtEvento->execute();
+            $evento = $stmtEvento->fetch(PDO::FETCH_ASSOC);
 
-        // Validação dos inputs
-        if (empty($nome) || empty($data) || $max_participantes < 1) {
-            throw new Exception('Preencha todos os campos obrigatórios!');
-        }
-        if (strlen($nome) < 3) {
-            throw new Exception('O nome do evento deve ter pelo menos 3 caracteres.');
-        }
-        if (!preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $data)) {
-            throw new Exception('Data inválida. Use o formato AAAA-MM-DD.');
-        }
-        if ($max_participantes > 10000) {
-            throw new Exception('Número máximo de participantes muito alto.');
-        }
-
-        foreach ($this->eventos as &$evento) {
-            if ($evento['id'] == $id) {
-                $evento['nome'] = $nome;
-                $evento['data'] = $data;
-                $evento['max_participantes'] = $max_participantes;
-                break;
+            if (!$evento) {
+                throw new Exception('Evento não encontrado.');
             }
-        }
-        $this->saveEvents();
-    }
 
-    public function registerUser($id) {
-        foreach ($this->eventos as &$evento) {
-            if ($evento['id'] == $id) {
-                if ($evento['participantes'] < $evento['max_participantes']) {
-                    $evento['participantes']++;
-                    $this->saveEvents();
-                    return;
-                } else {
-                    throw new Exception('Número máximo de participantes atingido.');
-                }
+            if ($evento['inscritos'] >= $evento['capacidade']) {
+                throw new Exception('Número máximo de participantes atingido.');
             }
+
+            $sqlInscricao = "INSERT INTO inscricao (id_evento, id_usuario, data_inscricao, status, presenca) 
+                             VALUES (:id_evento, :id_usuario, :data_inscricao, 'ativa', 0)";
+            $stmtInscricao = $this->conn->prepare($sqlInscricao);
+            $stmtInscricao->bindParam(':id_evento', $idEvento);
+            $stmtInscricao->bindParam(':id_usuario', $idUsuario);
+            $stmtInscricao->bindParam(':data_inscricao', date('Y-m-d'));
+            $stmtInscricao->execute();
+        } catch (PDOException $e) {
+            throw new Exception("Erro ao registrar usuário no evento: " . $e->getMessage());
         }
-        throw new Exception('Evento não encontrado.');
-    }
-
-    private function saveEvents() {
-        file_put_contents(__DIR__ . '/../config/eventos.php', '<?php return ' . var_export($this->eventos, true) . ';');
-    }
-}
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
-    if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
-        http_response_code(403);
-        header('Location: /views/auth/login.php?erro=acesso_negado');
-        exit;
-    }
-
-    $eventController = new EventController();
-    try {
-        $eventController->deleteEvent($_GET['id']);
-        header('Location: /views/dashboard/dashboardAdmin.php?success=evento_deletado');
-        exit;
-    } catch (Exception $e) {
-        header('Location: /views/dashboard/dashboardAdmin.php?error=' . urlencode($e->getMessage()));
-        exit;
-    }
-}
-if (isset($_GET['action']) && $_GET['action'] === 'register' && isset($_GET['id'])) {
-    if (!isset($_SESSION['usuario'])) {
-        http_response_code(403);
-        header('Location: /views/auth/login.php?erro=acesso_negado');
-        exit;
-    }
-
-    $eventController = new EventController();
-    try {
-        $eventController->registerUser($_GET['id']);
-        header('Location: /views/dashboard/dashboardUsuario.php?success=inscricao_realizada');
-        exit;
-    } catch (Exception $e) {
-        header('Location: /views/dashboard/dashboardUsuario.php?error=' . urlencode($e->getMessage()));
-        exit;
     }
 }

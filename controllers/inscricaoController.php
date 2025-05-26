@@ -1,7 +1,4 @@
 <?php
-require_once __DIR__ . '/../config/eventos.php';
-require_once __DIR__ . '/../config/inscricoes.php';
-require_once __DIR__ . '/eventController.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -31,39 +28,86 @@ if (!$evento) {
     exit;
 }
 
-$inscricoes = include __DIR__ . '/../config/inscricoes.php';
+$inscricaoController = new InscricaoController($eventoId);
+$inscricoes = $inscricaoController->getAllInscricoes();
 
-if (!is_array($inscricoes)) {
-    $inscricoes = [];
-}
-
-foreach ($inscricoes as $inscricao) {
-    if ($inscricao['usuario_id'] === $usuarioId && $inscricao['evento_id'] == $eventoId) {
-        header('Location: /views/dashboard/dashboardUsuario.php?error=voce_ja_esta_inscrito');
-        exit;
-    }
-}
-
-if ($evento['participantes'] >= $evento['max_participantes']) {
-    header('Location: /views/dashboard/dashboardUsuario.php?error=evento_lotado');
+if ($evento->getCapacidade() <= $inscricoes['total_inscricoes']){
+    http_response_code(403);
+    echo "Número máximo de participantes atingido.";
     exit;
 }
 
-try {
-    $eventController->registerUser($eventoId);
-
-    $inscricoes[] = [
-        'usuario_id' => $usuarioId,
-        'evento_id' => $eventoId
-    ];
-
-    if (file_put_contents(__DIR__ . '/../config/inscricoes.php', '<?php return ' . var_export($inscricoes, true) . ';') === false) {
-        throw new Exception('Erro ao salvar a inscrição.');
-    }
-
-    header('Location: /views/dashboard/dashboardUsuario.php?success=inscricao_realizada');
-    exit;
+try{
+    $mensagem = $inscricaoController->registerUser($eventoId, $usuarioId);
+    echo $mensagem;
 } catch (Exception $e) {
-    header('Location: /views/dashboard/dashboardUsuario.php?error=' . urlencode($e->getMessage()));
-    exit;
+    http_response_code(500);
+    echo "Erro ao se inscrever: " . $e->getMessage();
+}
+
+class InscricaoController {
+    private $conn, $idEvento;
+
+    public function __construct($idEvento) {
+        $this->idEvento = $idEvento;
+        $this->conn = Conexao::get();
+    }
+
+    public function getAllInscricoes() {
+        try{
+            $query = "SELECT COUNT(id_evento) as total_inscricoes FROM inscricao WHERE id_evento = :id_evento";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id_evento', $this->idEvento);
+            $stmt->execute();
+
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return $result ?? throw new PDOException("Erro ao obter inscrições");
+        } catch (PDOException $e) {
+            throw new Exception("Erro ao obter inscrições: " . $e->getMessage());
+        }
+    }
+
+    public function registerUser($idEvento, $idUsuario) {
+        try {
+            $sqlEvento = "SELECT capacidade, 
+                                 (SELECT COUNT(*) FROM inscricao WHERE id_evento = :id_evento) AS inscritos 
+                          FROM evento WHERE id = :id_evento";
+            $stmtEvento = $this->conn->prepare($sqlEvento);
+            $stmtEvento->bindParam(':id_evento', $idEvento);
+            $stmtEvento->execute();
+            $evento = $stmtEvento->fetch(PDO::FETCH_ASSOC);
+
+            if (!$evento) {
+                throw new Exception('Evento não encontrado.');
+            }
+
+            if ($evento['inscritos'] >= $evento['capacidade']) {
+                throw new Exception('Número máximo de participantes atingido.');
+            }
+
+            $sqlVerificaInscricao = "SELECT * FROM inscricao WHERE id_evento = :id_evento AND id_usuario = :id_usuario";
+            $stmtVerifica = $this->conn->prepare($sqlVerificaInscricao);
+            $stmtVerifica->bindParam(':id_evento', $idEvento);
+            $stmtVerifica->bindParam(':id_usuario', $idUsuario);
+            $stmtVerifica->execute();
+
+            if ($stmtVerifica->rowCount() > 0) {
+                throw new Exception('Você já está inscrito neste evento.');
+            }
+
+            $sqlInscricao = "INSERT INTO inscricao (id_evento, id_usuario, data_inscricao, status, presenca) 
+                             VALUES (:id_evento, :id_usuario, :data_inscricao, 'ativa', 0)";
+            $stmtInscricao = $this->conn->prepare($sqlInscricao);
+            $stmtInscricao->bindParam(':id_evento', $idEvento);
+            $stmtInscricao->bindParam(':id_usuario', $idUsuario);
+            $dataInscricao = date('Y-m-d');
+            $stmtInscricao->bindParam(':data_inscricao', $dataInscricao);
+            $stmtInscricao->execute();
+
+            return "Inscrição realizada com sucesso!";
+        } catch (PDOException $e) {
+            throw new Exception("Erro ao registrar usuário no evento: " . $e->getMessage());
+        }
+    }
 }
