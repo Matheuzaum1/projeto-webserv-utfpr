@@ -90,12 +90,7 @@ $status = $usuarioInscrito ? 'Inscrito' : ($vagasDisponiveis > 0 ? 'Disponível'
             <h1><?php echo htmlspecialchars($evento->getTitulo()); ?></h1>
             <span class="badge badge-status bg-<?php echo $status === 'Inscrito' ? 'success' : ($status === 'Disponível' ? 'primary' : 'secondary'); ?>">Status: <?php echo $status; ?></span>
             <ul class="details-list">
-                <li><strong>Descrição:</strong> <?php echo htmlspecialchars($evento->getDescricao()); ?></li>
-                <li><strong>Local:</strong> <?php echo htmlspecialchars($evento->getLocal()); ?></li>
                 <li><strong>Data:</strong> <?php echo htmlspecialchars($evento->getDataHora()); ?></li>
-                <li><strong>Duração:</strong> <?php echo htmlspecialchars($evento->getDuracao()); ?></li>
-                <li><strong>Categoria:</strong> <?php echo htmlspecialchars($evento->getCategoria()); ?></li>
-                <li><strong>Preço:</strong> <?php echo htmlspecialchars($evento->getPreco()); ?></li>
                 <li><strong>Número Máximo de Participantes:</strong> <?php echo htmlspecialchars($evento->getCapacidade()); ?></li>
                 <li><strong>Participantes Inscritos:</strong> <?php echo htmlspecialchars($participantesInscritos); ?></li>
             </ul>

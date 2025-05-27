@@ -104,7 +104,7 @@ if (isset($_GET['success']) && $_GET['success'] === 'inscricao') {
             <tbody>
                 <?php foreach ($eventos as $evento): ?>
                     <?php
-                    $vagasDisponiveis = $evento->getCapacidade() - $evento->getParticipantes();
+                    $vagasDisponiveis = $evento->getCapacidade() - $eventController->getNumeroInscritos($evento->getId());
                     $usuarioJaInscrito = in_array($evento->getId(), $eventosInscritos);
                     $status = $usuarioJaInscrito ? 'inscrito' : ($vagasDisponiveis > 0 ? 'disponivel' : 'esgotado');
                     $rowClass = '';

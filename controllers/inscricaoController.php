@@ -41,12 +41,7 @@ if ($evento->getCapacidade() <= $inscricoes['total_inscricoes']){
 $action = $_GET['action'] ?? null;
 
 if ($action === 'cancelar') {
-    // Desinscrever usuário
-    $sql = "DELETE FROM inscricao WHERE id_evento = :id_evento AND id_usuario = :id_usuario";
-    $stmt = $inscricaoController->conn->prepare($sql);
-    $stmt->bindParam(':id_evento', $eventoId);
-    $stmt->bindParam(':id_usuario', $usuarioId);
-    $stmt->execute();
+    $inscricaoController->unsubscribeUser($eventoId, $usuarioId);
     header('Location: /views/dashboard/dashboardUsuario.php?success=desinscricao');
     exit;
 }
@@ -127,6 +122,20 @@ class InscricaoController {
             return "Inscrição realizada com sucesso!";
         } catch (PDOException $e) {
             throw new Exception("Erro ao registrar usuário no evento: " . $e->getMessage());
+        }
+    }
+
+    public function unsubscribeUser($idEvento, $idUsuario){
+        try {
+            $sql = "DELETE FROM inscricao WHERE id_evento = :id_evento AND id_usuario = :id_usuario";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':id_evento', $idEvento);
+            $stmt->bindParam(':id_usuario', $idUsuario);
+            $stmt->execute();
+            header('Location: /views/dashboard/dashboardUsuario.php?success=desinscricao');
+            exit;
+        } catch (PDOException $e) {
+            throw new Exception("Erro ao cancelar inscrição: " . $e->getMessage());
         }
     }
 }
