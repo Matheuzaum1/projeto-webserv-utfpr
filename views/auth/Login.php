@@ -6,8 +6,13 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (isset($_SESSION['usuario'])) {
-    header('Location: /views/dashboard/dashboardUsuario.php');
-    exit;
+    if ($_SESSION['usuario']['tipo'] === 'admin') {
+        header('Location: /dashboardAdmin');
+        exit;
+    } else {
+        header('Location: /DashboardUsuario');
+        exit;
+    }
 }
 
 require_once __DIR__ . '/../../controllers/authController.php';
@@ -19,8 +24,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $senha = $_POST['senha'];
 
     if ($authController->login()) {
-        header('Location: /views/dashboard/dashboardUsuario.php');
-        exit;
+        if ($_SESSION['usuario']['tipo'] === 'admin') {
+            header('Location: /dashboardAdmin');
+            exit;
+        } else {
+            header('Location: /DashboardUsuario');
+            exit;
+        }
     } else {
         $erro = 'Credenciais inválidas. Tente novamente.';
     }
@@ -72,7 +82,9 @@ if (isset($_GET['erro'])) {
 <main>
     <div class="container mt-5">
         <h1 class="text-center">Login</h1>
-        <?php include(__DIR__ . '/../common/Alert.php'); ?>
+        <?php if (!empty($erro)): ?>
+            <div class="alert alert-danger" role="alert"><?php echo $erro; ?></div>
+        <?php endif; ?>
         <form method="POST" action="">
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
@@ -85,7 +97,7 @@ if (isset($_GET['erro'])) {
             <button type="submit" class="btn btn-primary w-100">Entrar</button>
         </form>
         <p class="text-center mt-3">
-            Não tem uma conta? <a href="/views/auth/register.php">Registre-se</a>
+            Não tem uma conta? <a href="/register">Registre-se</a>
         </p>
     </div>
 </main>

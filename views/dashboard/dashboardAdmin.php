@@ -33,12 +33,27 @@ $eventos = $eventController->listEvents();
 <body>
     <?php include(__DIR__ . '/../common/Header.php'); ?>
 
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" aria-label="Menu principal">
+            <div class="container">
+                <a class="navbar-brand" href="/">Projeto Web UTFPR</a>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a href="/logout" class="btn btn-danger" tabindex="0">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
     <div class="container mt-5">
         <h1 class="text-center">Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
         <?php include(__DIR__ . '/../common/Alert.php'); ?>
         <div class="d-flex justify-content-between align-items-center mt-4">
             <h2>Gerenciamento de Eventos</h2>
-            <a href="/views/gerenciamentoEventos/Create.php" class="btn btn-success">Criar Evento</a>
+            <a href="/admin" class="btn btn-success">Criar Evento</a>
         </div>
 
         <div class="card mt-4" data-aos="fade-up">
@@ -52,7 +67,7 @@ $eventos = $eventController->listEvents();
                     <label for="action" class="form-label">Ação:</label>
                     <select id="action" name="action" class="form-select" required>
                         <option value="/views/gerenciamentoEventos/Edit.php">Editar</option>
-                        <option value="/views/gerenciamentoEventos/Details.php">Detalhes</option>
+                        <option value="/evento/">Detalhes</option>
                         <option value="delete">Excluir</option>
                     </select>
                 </div>
@@ -84,7 +99,7 @@ $eventos = $eventController->listEvents();
                         <td>
                             <div class="btn-group">
                                 <a href="/views/gerenciamentoEventos/Edit.php?id=<?php echo $evento->getId(); ?>" class="btn btn-warning btn-sm">Editar</a>
-                                <a href="/views/gerenciamentoEventos/Details.php?id=<?php echo $evento->getId(); ?>" class="btn btn-info btn-sm">Detalhes</a>
+                                <a href="/evento/<?php echo $evento->getId(); ?>" class="btn btn-info btn-sm">Detalhes</a>
                                 <a href="/views/dashboard/dashboardAdmin.php?action=delete&id=<?php echo $evento->getId(); ?>" class="btn btn-danger btn-sm">Excluir</a>
                             </div>
                         </td>
@@ -106,6 +121,8 @@ $eventos = $eventController->listEvents();
 
         if (action === 'delete') {
             window.location.href = `/views/dashboard/dashboardAdmin.php?action=delete&id=${eventId}`;
+        } else if (action === '/evento/') {
+            window.location.href = `/evento/${eventId}`;
         } else {
             window.location.href = `${action}?id=${eventId}`;
         }

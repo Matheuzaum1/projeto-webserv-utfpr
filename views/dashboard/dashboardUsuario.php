@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['usuario']) || !in_array($_SESSION['usuario']['tipo'], ['usuario', 'participante'])) {
-    header('Location: /views/auth/login.php?erro=acesso_negado');
+    header('Location: /login');
     exit;
 }
 
@@ -148,11 +148,11 @@ if (isset($_GET['success']) && $_GET['success'] === 'inscricao') {
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" aria-label="Menu principal">
         <div class="container">
-            <a class="navbar-brand" href="#">Projeto Web UTFPR</a>
+            <a class="navbar-brand" href="/">Projeto Web UTFPR</a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a href="/index.php?action=logout" class="btn btn-danger" tabindex="0">Logout</a>
+                        <a href="/logout" class="btn btn-danger" tabindex="0">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -256,7 +256,7 @@ if (isset($_GET['success']) && $_GET['success'] === 'inscricao') {
                     ?>
                     <tr data-status="<?php echo $status; ?>" class="<?php echo $rowClass; ?>">
                         <td>
-                            <a href="/views/gerenciamentoEventos/Details.php?id=<?php echo $evento->getId(); ?>" class="text-decoration-underline" tabindex="0" aria-label="Detalhes do evento <?php echo htmlspecialchars($evento->getTitulo() ?? ''); ?>">
+                            <a href="/evento/<?php echo $evento->getId(); ?>" class="text-decoration-underline" tabindex="0" aria-label="Detalhes do evento <?php echo htmlspecialchars($evento->getTitulo() ?? ''); ?>">
                                 <?php echo htmlspecialchars($evento->getTitulo() ?? ''); ?>
                             </a>
                         </td>
