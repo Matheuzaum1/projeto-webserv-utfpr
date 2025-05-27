@@ -84,13 +84,9 @@ DROP TABLE IF EXISTS `evento`;
 CREATE TABLE `evento` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `titulo` varchar(255) NOT NULL,
-  `descricao` varchar(500) NOT NULL,
   `data_hora` datetime NOT NULL,
-  `duracao` time NOT NULL,
   `local` varchar(200) NOT NULL,
   `capacidade` int(11) NOT NULL,
-  `categoria` varchar(25) NOT NULL,
-  `preco` decimal(10,2) NOT NULL,
   `organizador` int(11) NOT NULL,
   `status` varchar(25) NOT NULL,
   PRIMARY KEY (`id`),

@@ -67,7 +67,7 @@ $eventos = $eventController->listEvents();
                 <tr>
                     <th>ID</th>
                     <th>Nome</th>
-                    <th>Data</th>
+                    <th>Data e hora</th>
                     <th>Número de Participantes</th>
                     <th>Máximo de Participantes</th>
                     <th>Ações</th>
@@ -78,8 +78,8 @@ $eventos = $eventController->listEvents();
                     <tr>
                         <td><?php echo htmlspecialchars($evento->getId()); ?></td>
                         <td><?php echo htmlspecialchars($evento->getTitulo()); ?></td>
-                        <td><?php echo htmlspecialchars($evento->getDataHora()); ?></td>
-                        <td><?php echo htmlspecialchars($evento->getParticipantes()); ?></td>
+                        <td><?php echo htmlspecialchars(DateTime::createFromFormat('Y-m-d H:i:s', $evento->getDataHora())->format('d/m/Y H:i')); ?></td>
+                        <td><?php echo htmlspecialchars($eventController->getNumeroInscritos($evento->getId())); ?></td>
                         <td><?php echo htmlspecialchars($evento->getCapacidade()); ?></td>
                         <td>
                             <div class="btn-group">

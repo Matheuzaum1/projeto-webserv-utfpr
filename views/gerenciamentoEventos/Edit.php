@@ -23,23 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = $_POST['data'] ?? '';
     $duracao = $_POST['duracao'] ?? '';
     $max_participantes = intval($_POST['max_participantes'] ?? 0);
-    $categoria = $_POST['categoria'] ?? '';
-    $preco = $_POST['preco'] ?? '';
 
-    if ($max_participantes < $evento->getParticipantes()) {
-        $erro = "O número máximo de participantes não pode ser menor do que o número de participantes já inscritos ({$evento->getParticipantes()}).";
+    if ($max_participantes < $eventController->getNumeroInscritos($evento->getId())) {
+        $erro = "O número máximo de participantes não pode ser menor do que o número de participantes já inscritos ({$eventController->getNumeroInscritos($evento->getId())})";
     } elseif (!empty($nome) && !empty($data) && $max_participantes > 0) {
         try {
             $eventController->updateEvent(
                 $eventId,
                 $nome,
-                $descricao,
-                $local,
                 $data,
-                $duracao,
-                $max_participantes,
-                $categoria,
-                $preco
+                $l=$max_participantes,
             );
             header('Location: /views/dashboard/dashboardAdmin.php?success=evento_atualizado');
             exit;
@@ -71,24 +64,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="mb-3">
-                <label for="descricao" class="form-label">Descrição:</label>
-                <textarea id="descricao" name="descricao" class="form-control" required><?php echo htmlspecialchars($evento->getDescricao()); ?></textarea>
+                <label for="capacidade" class="form-label">Capacidade do evento:</label> 
+                <input type="text" class="form-control" name="capacidade" value ="<?php echo htmlspecialchars($evento->getCapacidade()); ?>" required>
             </div>
+
             <div class="mb-3">
-                <label for="local" class="form-label">Local:</label>
-                <input type="text" id="local" name="local" class="form-control" value="<?php echo htmlspecialchars($evento->getLocal()); ?>" required>
-            </div>
-            <div class="mb-3">
-                <label for="duracao" class="form-label">Duração (em minutos):</label>
-                <input type="number" id="duracao" name="duracao" class="form-control" value="<?php echo htmlspecialchars($evento->getDuracao()); ?>" min="1" required>
-            </div>
-            <div class="mb-3">
-                <label for="categoria" class="form-label">Categoria:</label>
-                <input type="text" id="categoria" name="categoria" class="form-control" value="<?php echo htmlspecialchars($evento->getCategoria()); ?>" required>
-            </div>
-            <div class="mb-3">
-                <label for="preco" class="form-label">Preço:</label>
-                <input type="number" step="0.01" id="preco" name="preco" class="form-control" value="<?php echo htmlspecialchars($evento->getPreco()); ?>" required>
+                <label for="dataHora" class="form-label">Data e hora:</label>
+                <input type="datetime-local" id="dataHora" name="data_hora" class="form-control" value="<?php echo htmlspecialchars($evento->getDataHora()); ?>" required>
             </div>
 
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>

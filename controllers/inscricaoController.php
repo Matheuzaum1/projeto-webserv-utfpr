@@ -41,7 +41,6 @@ if ($evento->getCapacidade() <= $inscricoes['total_inscricoes']){
 $action = $_GET['action'] ?? null;
 
 if ($action === 'cancelar') {
-    // Desinscrever usuário usando método público
     $inscricaoController->cancelarInscricao($eventoId, $usuarioId);
     header('Location: /views/dashboard/dashboardUsuario.php?success=desinscricao');
     exit;

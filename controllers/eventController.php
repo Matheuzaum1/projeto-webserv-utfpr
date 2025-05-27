@@ -11,27 +11,20 @@ class EventController {
 
     public function listEvents() {
         try {
-            $sql = "SELECT e.*, (SELECT COUNT(*) FROM inscricao i WHERE i.id_evento = e.id) AS participantes FROM evento e";
+            $sql = "SELECT * FROM evento";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
             $eventos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             $eventList = [];
             foreach ($eventos as $eventoData) {
-                // Ajuste para os nomes corretos das colunas e construtor
                 $evento = new Evento(
-                    $eventoData['titulo'] ?? '',
-                    $eventoData['descricao'] ?? '',
-                    $eventoData['local'] ?? '',
-                    $eventoData['data_hora'] ?? '',
-                    $eventoData['duracao'] ?? '',
-                    $eventoData['capacidade'] ?? 0,
-                    $eventoData['status'] ?? '',
-                    $eventoData['categoria'] ?? '',
-                    $eventoData['preco'] ?? 0,
-                    $eventoData['organizador'] ?? '',
-                    $eventoData['participantes'] ?? 0,
-                    $eventoData['id'] ?? null
+                    $eventoData['id'],
+                    $eventoData['titulo'],
+                    $eventoData['data_hora'],
+                    $eventoData['capacidade'],
+                    $eventoData['status'],
+                    $eventoData['organizador']
                 );
                 $eventList[] = $evento;
             }
@@ -51,63 +44,53 @@ class EventController {
             $eventoData = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$eventoData) {
-                throw new Exception('Evento não encontrado.');
+                header('Location: /views/eventos/eventos.php?erro=evento_nao_encontrado');
+                exit;
             }
 
             return new Evento(
-                $eventoData['titulo'] ?? '',
-                $eventoData['descricao'] ?? '',
-                $eventoData['local'] ?? '',
-                $eventoData['data_hora'] ?? '',
-                $eventoData['duracao'] ?? '',
-                $eventoData['capacidade'] ?? 0,
-                $eventoData['status'] ?? '',
-                $eventoData['categoria'] ?? '',
-                $eventoData['preco'] ?? 0,
-                $eventoData['organizador'] ?? '',
-                0,
-                $eventoData['id'] ?? null
+                $eventoData['id'],
+                $eventoData['titulo'],
+                $eventoData['data_hora'],
+                $eventoData['capacidade'],
+                $eventoData['status'],
+                $eventoData['organizador']
             );
         } catch (PDOException $e) {
             throw new Exception("Erro ao buscar evento: " . $e->getMessage());
         }
     }
 
-    public function createEvent($titulo, $descricao, $local, $dataHora, $duracao, $capacidade, $categoria, $preco, $organizador) {
+    public function createEvent($titulo, $dataHora, $organizador, $capacidade) {
         try {
-            $sql = "INSERT INTO evento (titulo, descricao, local, data_hora, duracao, capacidade, status, categoria, preco, organizador) 
-                    VALUES (:titulo, :descricao, :local, :data_hora, :duracao, :capacidade, 'ativo', :categoria, :preco, :organizador)";
+            $status = 'ativo';
+            $sql = "INSERT INTO evento (titulo, data_hora, organizador, capacidade, status)
+                    VALUES (:titulo, :data_hora, :organizador, :capacidade, :status)";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':titulo', $titulo);
-            $stmt->bindParam(':descricao', $descricao);
-            $stmt->bindParam(':local', $local);
             $stmt->bindParam(':data_hora', $dataHora);
-            $stmt->bindParam(':duracao', $duracao);
-            $stmt->bindParam(':capacidade', $capacidade);
-            $stmt->bindParam(':categoria', $categoria);
-            $stmt->bindParam(':preco', $preco);
             $stmt->bindParam(':organizador', $organizador);
+            $stmt->bindParam(':capacidade', $capacidade);
+            $stmt->bindParam(':status', $status);
             $stmt->execute();
+            if ($stmt->rowCount() === 0) {
+                throw new Exception('Erro ao criar evento. Verifique os dados informados.');
+            }
         } catch (PDOException $e) {
             throw new Exception("Erro ao criar evento: " . $e->getMessage());
         }
     }
 
-    public function updateEvent($id, $titulo, $descricao, $local, $dataHora, $duracao, $capacidade, $categoria, $preco) {
+    public function updateEvent($id, $titulo, $dataHora, $capacidade) {
         try {
             $sql = "UPDATE evento 
-                    SET titulo = :titulo, descricao = :descricao, local = :local, data_hora = :data_hora, 
-                        duracao = :duracao, capacidade = :capacidade, categoria = :categoria, preco = :preco 
+                    SET titulo = :titulo, data_hora = :data_hora, 
+                        capacidade = :capacidade 
                     WHERE id = :id";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':titulo', $titulo);
-            $stmt->bindParam(':descricao', $descricao);
-            $stmt->bindParam(':local', $local);
             $stmt->bindParam(':data_hora', $dataHora);
-            $stmt->bindParam(':duracao', $duracao);
             $stmt->bindParam(':capacidade', $capacidade);
-            $stmt->bindParam(':categoria', $categoria);
-            $stmt->bindParam(':preco', $preco);
             $stmt->bindParam(':id', $id);
             $stmt->execute();
 
@@ -163,7 +146,8 @@ class EventController {
             $stmtInscricao = $this->conn->prepare($sqlInscricao);
             $stmtInscricao->bindParam(':id_evento', $idEvento);
             $stmtInscricao->bindParam(':id_usuario', $idUsuario);
-            $stmtInscricao->bindParam(':data_inscricao', date('Y-m-d'));
+            $dataInscricao = date('Y-m-d');
+            $stmtInscricao->bindParam(':data_inscricao', $dataInscricao);
             $stmtInscricao->execute();
         } catch (PDOException $e) {
             throw new Exception("Erro ao registrar usuário no evento: " . $e->getMessage());

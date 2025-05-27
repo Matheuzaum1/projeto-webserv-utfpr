@@ -10,13 +10,14 @@ require_once __DIR__ . '/../../controllers/EventController.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = trim($_POST['nome'] ?? '');
-    $data = trim($_POST['data'] ?? '');
-    $max_participantes = intval($_POST['max_participantes'] ?? 0);
+    $dataHora = trim($_POST['data_hora'] ?? ''); // Captura o valor do campo datetime-local
+    $maxParticipantes = intval($_POST['max_participantes'] ?? 0);
+    $usuario = $_SESSION['usuario']['id'] ?? null;
 
-    if (!empty($nome) && !empty($data) && $max_participantes > 0) {
-        $eventController = new EventController();
+    if (!empty($nome) && !empty($dataHora) && $maxParticipantes > 0) {
         try {
-            $eventController->createEvent($nome, $data, $max_participantes);
+            $eventController = new EventController();
+            $eventController->createEvent($nome, $dataHora, $usuario, $maxParticipantes);
             header('Location: /views/dashboard/dashboardAdmin.php?success=evento_criado');
             exit;
         } catch (Exception $e) {
@@ -70,8 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text" id="nome" name="nome" class="form-control" required>
                 </div>
                 <div class="mb-3">
-                    <label for="data" class="form-label">Data:</label>
-                    <input type="date" id="data" name="data" class="form-control" required>
+                    <label for="data_hora" class="form-label">Data e Hora:</label>
+                    <input type="datetime-local" id="data_hora" name="data_hora" class="form-control" required>
                 </div>
                 <div class="mb-3">
                     <label for="max_participantes" class="form-label">Número Máximo de Participantes:</label>
