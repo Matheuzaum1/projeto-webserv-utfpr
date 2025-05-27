@@ -104,8 +104,10 @@ $status = $usuarioInscrito ? 'Inscrito' : ($vagasDisponiveis > 0 ? 'Disponível'
                 <?php else: ?>
                     <button class="btn btn-secondary btn-inscrever" disabled>Esgotado</button>
                 <?php endif; ?>
+                <a href="/views/dashboard/dashboardUsuario.php" class="btn btn-outline-dark btn-back">Voltar</a>
+            <?php elseif (isset($_SESSION['usuario']) && $_SESSION['usuario']['tipo'] === 'admin'): ?>
+                <a href="/views/dashboard/dashboardAdmin.php" class="btn btn-outline-dark btn-back">Voltar</a>
             <?php endif; ?>
-            <a href="/views/dashboard/dashboardUsuario.php" class="btn btn-outline-dark btn-back">Voltar</a>
         </div>
     </div>
 </body>

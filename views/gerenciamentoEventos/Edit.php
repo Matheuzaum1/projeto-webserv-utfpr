@@ -18,21 +18,18 @@ if (!$evento) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = $_POST['nome'] ?? '';
-    $descricao = $_POST['descricao'] ?? '';
-    $local = $_POST['local'] ?? '';
-    $data = $_POST['data'] ?? '';
-    $duracao = $_POST['duracao'] ?? '';
-    $max_participantes = intval($_POST['max_participantes'] ?? 0);
+    $capacidade = intval($_POST['capacidade'] ?? 0);
+    $dataHora = $_POST['data_hora'] ?? '';
 
-    if ($max_participantes < $eventController->getNumeroInscritos($evento->getId())) {
+    if ($capacidade < $eventController->getNumeroInscritos($evento->getId())) {
         $erro = "O número máximo de participantes não pode ser menor do que o número de participantes já inscritos ({$eventController->getNumeroInscritos($evento->getId())})";
-    } elseif (!empty($nome) && !empty($data) && $max_participantes > 0) {
+    } elseif (!empty($nome) && !empty($dataHora) && $capacidade > 0) {
         try {
             $eventController->updateEvent(
                 $eventId,
                 $nome,
-                $data,
-                $l=$max_participantes,
+                $dataHora,
+                $capacidade
             );
             header('Location: /views/dashboard/dashboardAdmin.php?success=evento_atualizado');
             exit;
