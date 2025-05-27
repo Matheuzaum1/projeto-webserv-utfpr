@@ -42,3 +42,35 @@ Leia o arquivo `docs/instalacao.md` para ver os passos de instalação e configu
 - `config/`: Arquivos de configuração.
 - `README.md`: Este arquivo.
 - `.gitignore`: Arquivos e pastas ignorados no repositório.
+
+## Pré-requisitos para funcionamento básico
+- PHP 8.0 ou superior
+- MySQL/MariaDB
+- Extensão PDO habilitada no PHP
+- Composer (opcional, para dependências)
+
+## Configuração da conexão com o banco de dados
+O arquivo `config/config.php` deve conter as informações corretas de acesso ao banco:
+
+```php
+// ...existing code...
+define('DB_SERVER', 'localhost');
+define('DB_USERNAME', 'root');
+define('DB_PASSWORD', '');
+define('DB_DATABASE', 'projeto_web');
+// ...existing code...
+```
+
+A string de conexão já está configurada para usar UTF-8:
+```php
+$conn = new PDO("mysql:host=".DB_SERVER.";dbname=".DB_DATABASE.";charset=utf8", DB_USERNAME, DB_PASSWORD);
+```
+
+## Corrigindo textos corrompidos dos eventos
+Se os títulos dos eventos estiverem com caracteres estranhos, rode o script SQL abaixo no seu banco de dados para corrigir:
+
+```sql
+source scripts/fix_event_titles.sql;
+```
+
+Ou copie e cole o conteúdo do arquivo `scripts/fix_event_titles.sql` no seu cliente MySQL/phpMyAdmin.
