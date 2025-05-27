@@ -1,8 +1,8 @@
 <?php
 class Evento {
-    private $id, $titulo, $descricao, $local, $dataHora, $duracao, $capacidade, $status, $categoria, $preco, $idAdmin;
+    private $id, $titulo, $descricao, $local, $dataHora, $duracao, $capacidade, $status, $categoria, $preco, $idAdmin, $participantes;
 
-    public function __construct($id = null, $titulo, $descricao, $local, $dataHora, $duracao, $capacidade, $status, $categoria, $preco, $idAdmin) {
+    public function __construct($id = null, $titulo, $descricao, $local, $dataHora, $duracao, $capacidade, $status, $categoria, $preco, $idAdmin, $participantes = 0) {
         $this->id = $id;
         $this->titulo = $titulo;
         $this->descricao = $descricao;
@@ -14,6 +14,7 @@ class Evento {
         $this->categoria = $categoria;
         $this->preco = $preco;
         $this->idAdmin = $idAdmin;
+        $this->participantes = $participantes;
     }
     public function getId() {
         return $this->id;
@@ -59,6 +60,10 @@ class Evento {
         return $this->idAdmin;
     }
 
+    public function getParticipantes() {
+        return $this->participantes;
+    }
+
     public function setId($id) {
         $this->id = $id;
     }
@@ -101,5 +106,9 @@ class Evento {
 
     public function setIdAdmin($idAdmin) {
         $this->idAdmin = $idAdmin;
+    }
+
+    public function setParticipantes($participantes) {
+        $this->participantes = $participantes;
     }
 }

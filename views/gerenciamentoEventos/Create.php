@@ -63,11 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container">
         <div class="form-container mx-auto col-md-6">
             <h1>Criar Evento</h1>
-            <?php if (isset($erro)): ?>
-                <div class="alert alert-danger">
-                    <?php echo htmlspecialchars($erro); ?>
-                </div>
-            <?php endif; ?>
+            <?php include(__DIR__ . '/../common/Alert.php'); ?>
             <form method="POST" action="">
                 <div class="mb-3">
                     <label for="nome" class="form-label">Nome do Evento:</label>

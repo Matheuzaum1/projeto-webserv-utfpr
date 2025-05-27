@@ -1,4 +1,6 @@
-<?php return array (
+<?php
+// Corrigido para garantir encoding UTF-8
+return array (
   0 => 
   array (
     'id' => 1,

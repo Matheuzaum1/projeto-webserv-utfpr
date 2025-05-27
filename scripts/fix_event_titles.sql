@@ -1,0 +1,21 @@
+-- Corrige os títulos dos eventos para UTF-8 correto
+UPDATE evento SET titulo = 'Workshop de Desenvolvimento Web' WHERE id = 1;
+UPDATE evento SET titulo = 'Seminário de Sustentabilidade' WHERE id = 2;
+UPDATE evento SET titulo = 'Hackathon de Inovação' WHERE id = 3;
+UPDATE evento SET titulo = 'Congresso de Tecnologia' WHERE id = 4;
+UPDATE evento SET titulo = 'Workshop de Design Gráfico' WHERE id = 5;
+UPDATE evento SET titulo = 'Palestra sobre Empreendedorismo' WHERE id = 6;
+UPDATE evento SET titulo = 'Curso de Programação em Python' WHERE id = 7;
+UPDATE evento SET titulo = 'Seminário de Big Data' WHERE id = 8;
+UPDATE evento SET titulo = 'Workshop de Fotografia' WHERE id = 9;
+UPDATE evento SET titulo = 'Congresso de Educação' WHERE id = 10;
+UPDATE evento SET titulo = 'Curso de Marketing Digital' WHERE id = 11;
+UPDATE evento SET titulo = 'Palestra sobre Saúde Mental' WHERE id = 12;
+UPDATE evento SET titulo = 'Hackathon de Sustentabilidade' WHERE id = 13;
+UPDATE evento SET titulo = 'Seminário de Robótica' WHERE id = 14;
+UPDATE evento SET titulo = 'Workshop de Desenvolvimento Mobile' WHERE id = 15;
+UPDATE evento SET titulo = 'Congresso de Inteligência Artificial' WHERE id = 16;
+UPDATE evento SET titulo = 'Curso de Desenvolvimento de Jogos' WHERE id = 17;
+UPDATE evento SET titulo = 'Palestra sobre Inovação Tecnológica' WHERE id = 18;
+UPDATE evento SET titulo = 'Seminário de Gestão de Projetos' WHERE id = 19;
+UPDATE evento SET titulo = 'Workshop de UX/UI Design' WHERE id = 20;

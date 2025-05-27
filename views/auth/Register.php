@@ -38,11 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container mt-5">
         <h1 class="text-center">Registrar</h1>
-        <?php if (isset($erro)): ?>
-            <div class="alert alert-danger">
-                <?php echo htmlspecialchars($erro); ?>
-            </div>
-        <?php endif; ?>
+        <?php include(__DIR__ . '/../common/Alert.php'); ?>
         <form method="POST" action="">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome</label>
@@ -55,6 +51,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="mb-3">
                 <label for="senha" class="form-label">Senha</label>
                 <input type="password" class="form-control" id="senha" name="senha" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Tipo de perfil</label><br>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="tipo_usuario" id="participante" value="participante" checked>
+                    <label class="form-check-label" for="participante">Usuário</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="tipo_usuario" id="admin" value="admin">
+                    <label class="form-check-label" for="admin">Organizador</label>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary w-100">Registrar</button>
         </form>

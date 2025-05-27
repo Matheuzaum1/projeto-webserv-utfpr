@@ -1,5 +1,6 @@
 <?php
-
+require_once __DIR__ . '/../database/Conexao.php';
+require_once __DIR__ . '/../models/Evento.php';
 
 class EventController {
     private $conn;
@@ -30,7 +31,8 @@ class EventController {
                     $eventoData['status'],
                     $eventoData['categoria'],
                     $eventoData['preco'],
-                    $eventoData['organizador']
+                    $eventoData['organizador'],
+                    $eventoData['participantes'] // novo campo
                 );
                 $eventList[] = $evento;
             }

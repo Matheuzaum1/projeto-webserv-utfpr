@@ -72,11 +72,7 @@ if (isset($_GET['erro'])) {
 <main>
     <div class="container mt-5">
         <h1 class="text-center">Login</h1>
-        <?php if (isset($erro)): ?>
-            <div class="alert alert-danger">
-                <?php echo htmlspecialchars($erro); ?>
-            </div>
-        <?php endif; ?>
+        <?php include(__DIR__ . '/../common/Alert.php'); ?>
         <form method="POST" action="">
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>

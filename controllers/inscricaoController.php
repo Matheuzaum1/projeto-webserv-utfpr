@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/eventController.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -39,8 +40,13 @@ if ($evento->getCapacidade() <= $inscricoes['total_inscricoes']){
 
 try{
     $mensagem = $inscricaoController->registerUser($eventoId, $usuarioId);
-    echo $mensagem;
+    header('Location: /views/dashboard/dashboardUsuario.php?success=inscricao');
+    exit;
 } catch (Exception $e) {
+    if (strpos($e->getMessage(), 'já está inscrito') !== false) {
+        header('Location: /views/dashboard/dashboardUsuario.php?info=ja_inscrito');
+        exit;
+    }
     http_response_code(500);
     echo "Erro ao se inscrever: " . $e->getMessage();
 }

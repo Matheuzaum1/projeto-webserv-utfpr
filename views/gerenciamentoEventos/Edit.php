@@ -48,11 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container mt-5">
         <h1 class="mb-4">Editar Evento</h1>
-        <?php if (isset($erro)): ?>
-            <div class="alert alert-danger">
-                <?php echo htmlspecialchars($erro); ?>
-            </div>
-        <?php endif; ?>
+        <?php include(__DIR__ . '/../common/Alert.php'); ?>
         <form method="POST" class="bg-light p-4 rounded shadow-sm">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome do Evento:</label>

@@ -1,13 +1,23 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'usuario') {
+if (!isset($_SESSION['usuario']) || !in_array($_SESSION['usuario']['tipo'], ['usuario', 'participante'])) {
     header('Location: /views/auth/login.php?erro=acesso_negado');
     exit;
 }
 
-$eventos = require_once __DIR__ . '/../../config/eventos.php';
+require_once __DIR__ . '/../../controllers/eventController.php';
+$eventController = new EventController();
+$eventos = $eventController->listEvents();
+
 $inscricoes = require_once __DIR__ . '/../../config/inscricoes.php';
+
+$alerta = '';
+if (isset($_GET['success']) && $_GET['success'] === 'inscricao') {
+    $alerta = '<div class="alert alert-success alert-dismissible fade show" role="alert">Inscrição realizada com sucesso!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+} elseif (isset($_GET['info']) && $_GET['info'] === 'ja_inscrito') {
+    $alerta = '<div class="alert alert-info alert-dismissible fade show" role="alert">Você já está inscrito neste evento.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+}
 ?>
 
 <!DOCTYPE html>
@@ -34,30 +44,12 @@ $inscricoes = require_once __DIR__ . '/../../config/inscricoes.php';
         </div>
     </nav>
 </header>
-
 <main class="flex-grow-1">
     <div class="container mt-5">
         <h1 class="text-center">Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
+        <?php echo $alerta; ?>
 
         <h2 class="mt-5">Eventos Disponíveis</h2>
-
-        <?php if (isset($_GET['success'])): ?>
-            <div class="alert alert-success">
-                <?php
-                switch ($_GET['success']) {
-                    case 'inscricao_realizada':
-                        echo 'Inscrição realizada com sucesso!';
-                        break;
-                }
-                ?>
-            </div>
-        <?php endif; ?>
-
-        <?php if (isset($_GET['error'])): ?>
-            <div class="alert alert-danger">
-                <?php echo htmlspecialchars($_GET['error']); ?>
-            </div>
-        <?php endif; ?>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <label for="filter" class="form-label me-2">Filtrar por:</label>
@@ -97,26 +89,26 @@ $inscricoes = require_once __DIR__ . '/../../config/inscricoes.php';
             <tbody>
                 <?php foreach ($eventos as $evento): ?>
                     <?php
-                    $vagasDisponiveis = $evento['max_participantes'] - $evento['participantes'];
+                    // Supondo que participantes é obtido do banco, mas se não for, ajuste conforme necessário
+                    $vagasDisponiveis = $evento->getCapacidade() - $evento->getParticipantes();
                     $usuarioJaInscrito = false;
                     foreach ($inscricoes as $inscricao) {
-                        if ($inscricao['usuario_id'] === $_SESSION['usuario']['id'] && $inscricao['evento_id'] == $evento['id']) {
+                        if ($inscricao['usuario_id'] === $_SESSION['usuario']['id'] && $inscricao['evento_id'] == $evento->getId()) {
                             $usuarioJaInscrito = true;
                             break;
                         }
                     }
-
                     $status = $usuarioJaInscrito ? 'inscrito' : ($vagasDisponiveis > 0 ? 'disponivel' : 'esgotado');
                     ?>
                     <tr data-status="<?php echo $status; ?>">
-                        <td><?php echo htmlspecialchars($evento['nome']); ?></td>
-                        <td><?php echo htmlspecialchars($evento['data']); ?></td>
+                        <td><?php echo htmlspecialchars($evento->getTitulo()); ?></td>
+                        <td><?php echo htmlspecialchars($evento->getDataHora()); ?></td>
                         <td><?php echo $vagasDisponiveis > 0 ? $vagasDisponiveis : 'Esgotado'; ?></td>
                         <td>
                             <?php if ($usuarioJaInscrito): ?>
                                 <button class="btn btn-success btn-sm" disabled>Já inscrito</button>
                             <?php elseif ($vagasDisponiveis > 0): ?>
-                                <form method="POST" action="/controllers/inscricaoController.php?id=<?php echo htmlspecialchars($evento['id']); ?>" style="display: inline;">
+                                <form method="POST" action="/controllers/inscricaoController.php?id=<?php echo htmlspecialchars($evento->getId()); ?>" style="display: inline;">
                                     <button type="submit" class="btn btn-primary btn-sm">Inscrever-se</button>
                                 </form>
                             <?php else: ?>

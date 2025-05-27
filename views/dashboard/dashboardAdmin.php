@@ -35,26 +35,7 @@ $eventos = $eventController->listEvents();
 
     <div class="container mt-5">
         <h1 class="text-center">Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
-        <?php if (isset($_GET['success'])): ?>
-    <div class="alert alert-success">
-        <?php
-        switch ($_GET['success']) {
-            case 'evento_deletado':
-                echo 'Evento deletado com sucesso!';
-                break;
-            case 'evento_criado':
-                echo 'Evento criado com sucesso!';
-                break;
-            case 'evento_atualizado':
-                echo 'Evento atualizado com sucesso!';
-                break;
-            default:
-                echo 'Operação realizada com sucesso!';
-                break;
-        }
-        ?>
-    </div>
-<?php endif; ?>
+        <?php include(__DIR__ . '/../common/Alert.php'); ?>
         <div class="d-flex justify-content-between align-items-center mt-4">
             <h2>Gerenciamento de Eventos</h2>
             <a href="/views/gerenciamentoEventos/Create.php" class="btn btn-success">Criar Evento</a>

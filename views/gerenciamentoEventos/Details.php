@@ -45,6 +45,7 @@ if (!$evento) {
     </style>
 </head>
 <body>
+    <?php include(__DIR__ . '/../common/Alert.php'); ?>
     <div class="container mt-5">
         <div class="details-container">
             <h1>Detalhes do Evento</h1>

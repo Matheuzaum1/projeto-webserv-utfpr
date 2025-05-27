@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../database/Conexao.php';
+
 $acao = $_POST['acao'] ?? $_GET['acao'] ?? '';
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -75,6 +77,7 @@ class AuthController {
             $nome = trim($_POST['nome'] ?? '');
             $email = trim($_POST['email'] ?? '');
             $senha = trim($_POST['senha'] ?? '');
+            $tipo_usuario = $_POST['tipo_usuario'] ?? 'participante';
 
             if (empty($nome) || empty($email) || empty($senha)) {
                 header('Location: /views/auth/register.php?erro=campos_vazios');
@@ -92,6 +95,9 @@ class AuthController {
                 header('Location: /views/auth/register.php?erro=nome_curto');
                 exit;
             }
+            if (!in_array($tipo_usuario, ['admin', 'participante'])) {
+                $tipo_usuario = 'participante';
+            }
 
             $sqlVerifica = "SELECT * FROM usuario WHERE email = :email";
             $stmtVerifica = $this->conn->prepare($sqlVerifica);
@@ -104,12 +110,13 @@ class AuthController {
             }
 
             $sql = "INSERT INTO usuario (nome_completo, email, senha, tipo_usuario) 
-                    VALUES (:nome, :email, :senha, 'participante')";
+                    VALUES (:nome, :email, :senha, :tipo_usuario)";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':nome', $nome);
             $stmt->bindParam(':email', $email);
             $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
             $stmt->bindParam(':senha', $senhaHash);
+            $stmt->bindParam(':tipo_usuario', $tipo_usuario);
             $stmt->execute();
 
             header('Location: /views/auth/login.php?success=usuario_cadastrado');
