@@ -50,7 +50,7 @@ if (isset($_GET['success']) && $_GET['success'] === 'inscricao') {
 </header>
 <main class="flex-grow-1">
     <div class="container mt-5">
-        <h1 class="text-center">Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
+        <h1 class="text-center">Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome'] ?? 'Usuário'); ?>!</h1>
         <?php echo $alerta; ?>
 
         <script>
@@ -115,10 +115,10 @@ if (isset($_GET['success']) && $_GET['success'] === 'inscricao') {
                     <tr data-status="<?php echo $status; ?>" class="<?php echo $rowClass; ?>">
                         <td>
                             <a href="/views/gerenciamentoEventos/Details.php?id=<?php echo $evento->getId(); ?>" class="text-decoration-underline">
-                                <?php echo htmlspecialchars($evento->getTitulo()); ?>
+                                <?php echo htmlspecialchars($evento->getTitulo() ?? ''); ?>
                             </a>
                         </td>
-                        <td><?php echo htmlspecialchars($evento->getDataHora()); ?></td>
+                        <td><?php echo htmlspecialchars($evento->getDataHora() ?? ''); ?></td>
                         <td><?php echo $vagasDisponiveis > 0 ? $vagasDisponiveis : 'Esgotado'; ?></td>
                         <td>
                             <?php if ($usuarioJaInscrito): ?>

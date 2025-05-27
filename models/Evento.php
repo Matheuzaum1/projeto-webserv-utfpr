@@ -2,7 +2,8 @@
 class Evento {
     private $id, $titulo, $descricao, $local, $dataHora, $duracao, $capacidade, $status, $categoria, $preco, $idAdmin, $participantes;
 
-    public function __construct($id = null, $titulo, $descricao, $local, $dataHora, $duracao, $capacidade, $status, $categoria, $preco, $idAdmin, $participantes = 0) {
+    // Corrigido: parâmetros obrigatórios antes dos opcionais
+    public function __construct($titulo, $descricao, $local, $dataHora, $duracao, $capacidade, $status, $categoria, $preco, $idAdmin, $participantes = 0, $id = null) {
         $this->id = $id;
         $this->titulo = $titulo;
         $this->descricao = $descricao;

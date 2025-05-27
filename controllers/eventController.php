@@ -11,28 +11,27 @@ class EventController {
 
     public function listEvents() {
         try {
-            $sql = "SELECT e.*, 
-                           (SELECT COUNT(*) FROM inscricao i WHERE i.id_evento = e.id) AS participantes 
-                    FROM evento e";
+            $sql = "SELECT e.*, (SELECT COUNT(*) FROM inscricao i WHERE i.id_evento = e.id) AS participantes FROM evento e";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
             $eventos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             $eventList = [];
             foreach ($eventos as $eventoData) {
+                // Ajuste para os nomes corretos das colunas e construtor
                 $evento = new Evento(
-                    $eventoData['id'],
-                    $eventoData['nome'],
-                    $eventoData['descricao'],
-                    $eventoData['local'],
-                    $eventoData['data'],
-                    $eventoData['duracao'],
-                    $eventoData['max_participantes'],
-                    $eventoData['status'],
-                    $eventoData['categoria'],
-                    $eventoData['preco'],
-                    $eventoData['organizador'],
-                    $eventoData['participantes'] // novo campo
+                    $eventoData['titulo'] ?? '',
+                    $eventoData['descricao'] ?? '',
+                    $eventoData['local'] ?? '',
+                    $eventoData['data_hora'] ?? '',
+                    $eventoData['duracao'] ?? '',
+                    $eventoData['capacidade'] ?? 0,
+                    $eventoData['status'] ?? '',
+                    $eventoData['categoria'] ?? '',
+                    $eventoData['preco'] ?? 0,
+                    $eventoData['organizador'] ?? '',
+                    $eventoData['participantes'] ?? 0,
+                    $eventoData['id'] ?? null
                 );
                 $eventList[] = $evento;
             }
@@ -56,17 +55,18 @@ class EventController {
             }
 
             return new Evento(
-                $eventoData['id'],
-                $eventoData['nome'],
-                $eventoData['descricao'],
-                $eventoData['local'],
-                $eventoData['data'],
-                $eventoData['duracao'],
-                $eventoData['max_participantes'],
-                $eventoData['status'],
-                $eventoData['categoria'],
-                $eventoData['preco'],
-                $eventoData['organizador']
+                $eventoData['titulo'] ?? '',
+                $eventoData['descricao'] ?? '',
+                $eventoData['local'] ?? '',
+                $eventoData['data_hora'] ?? '',
+                $eventoData['duracao'] ?? '',
+                $eventoData['capacidade'] ?? 0,
+                $eventoData['status'] ?? '',
+                $eventoData['categoria'] ?? '',
+                $eventoData['preco'] ?? 0,
+                $eventoData['organizador'] ?? '',
+                0,
+                $eventoData['id'] ?? null
             );
         } catch (PDOException $e) {
             throw new Exception("Erro ao buscar evento: " . $e->getMessage());

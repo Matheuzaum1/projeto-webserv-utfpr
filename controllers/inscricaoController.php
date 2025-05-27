@@ -89,7 +89,7 @@ class InscricaoController {
 
     public function registerUser($idEvento, $idUsuario) {
         try {
-            $sqlEvento = "SELECT max_participantes, 
+            $sqlEvento = "SELECT capacidade, 
                                  (SELECT COUNT(*) FROM inscricao WHERE id_evento = :id_evento) AS inscritos 
                           FROM evento WHERE id = :id_evento";
             $stmtEvento = $this->conn->prepare($sqlEvento);
@@ -101,7 +101,7 @@ class InscricaoController {
                 throw new Exception('Evento não encontrado.');
             }
 
-            if ($evento['inscritos'] >= $evento['max_participantes']) {
+            if ($evento['inscritos'] >= $evento['capacidade']) {
                 throw new Exception('Número máximo de participantes atingido.');
             }
 
