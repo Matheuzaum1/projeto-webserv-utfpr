@@ -38,6 +38,19 @@ if ($evento->getCapacidade() <= $inscricoes['total_inscricoes']){
     exit;
 }
 
+$action = $_GET['action'] ?? null;
+
+if ($action === 'cancelar') {
+    // Desinscrever usuário
+    $sql = "DELETE FROM inscricao WHERE id_evento = :id_evento AND id_usuario = :id_usuario";
+    $stmt = $inscricaoController->conn->prepare($sql);
+    $stmt->bindParam(':id_evento', $eventoId);
+    $stmt->bindParam(':id_usuario', $usuarioId);
+    $stmt->execute();
+    header('Location: /views/dashboard/dashboardUsuario.php?success=desinscricao');
+    exit;
+}
+
 try{
     $mensagem = $inscricaoController->registerUser($eventoId, $usuarioId);
     header('Location: /views/dashboard/dashboardUsuario.php?success=inscricao');
@@ -76,7 +89,7 @@ class InscricaoController {
 
     public function registerUser($idEvento, $idUsuario) {
         try {
-            $sqlEvento = "SELECT capacidade, 
+            $sqlEvento = "SELECT max_participantes, 
                                  (SELECT COUNT(*) FROM inscricao WHERE id_evento = :id_evento) AS inscritos 
                           FROM evento WHERE id = :id_evento";
             $stmtEvento = $this->conn->prepare($sqlEvento);
@@ -88,7 +101,7 @@ class InscricaoController {
                 throw new Exception('Evento não encontrado.');
             }
 
-            if ($evento['inscritos'] >= $evento['capacidade']) {
+            if ($evento['inscritos'] >= $evento['max_participantes']) {
                 throw new Exception('Número máximo de participantes atingido.');
             }
 

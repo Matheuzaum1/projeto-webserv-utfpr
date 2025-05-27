@@ -18,14 +18,29 @@ if (!$evento) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = $_POST['nome'] ?? '';
+    $descricao = $_POST['descricao'] ?? '';
+    $local = $_POST['local'] ?? '';
     $data = $_POST['data'] ?? '';
+    $duracao = $_POST['duracao'] ?? '';
     $max_participantes = intval($_POST['max_participantes'] ?? 0);
+    $categoria = $_POST['categoria'] ?? '';
+    $preco = $_POST['preco'] ?? '';
 
-    if ($max_participantes < $evento['participantes']) {
-        $erro = "O número máximo de participantes não pode ser menor do que o número de participantes já inscritos ({$evento['participantes']}).";
+    if ($max_participantes < $evento->getParticipantes()) {
+        $erro = "O número máximo de participantes não pode ser menor do que o número de participantes já inscritos ({$evento->getParticipantes()}).";
     } elseif (!empty($nome) && !empty($data) && $max_participantes > 0) {
         try {
-            $eventController->updateEvent($eventId, $nome, $data, $max_participantes);
+            $eventController->updateEvent(
+                $eventId,
+                $nome,
+                $descricao,
+                $local,
+                $data,
+                $duracao,
+                $max_participantes,
+                $categoria,
+                $preco
+            );
             header('Location: /views/dashboard/dashboardAdmin.php?success=evento_atualizado');
             exit;
         } catch (Exception $e) {
@@ -52,17 +67,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="POST" class="bg-light p-4 rounded shadow-sm">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome do Evento:</label>
-                <input type="text" id="nome" name="nome" class="form-control" value="<?php echo htmlspecialchars($evento['nome']); ?>" required>
+                <input type="text" id="nome" name="nome" class="form-control" value="<?php echo htmlspecialchars($evento->getTitulo()); ?>" required>
             </div>
 
             <div class="mb-3">
-                <label for="data" class="form-label">Data:</label>
-                <input type="date" id="data" name="data" class="form-control" value="<?php echo htmlspecialchars($evento['data']); ?>" required>
+                <label for="descricao" class="form-label">Descrição:</label>
+                <textarea id="descricao" name="descricao" class="form-control" required><?php echo htmlspecialchars($evento->getDescricao()); ?></textarea>
             </div>
-
             <div class="mb-3">
-                <label for="max_participantes" class="form-label">Número Máximo de Participantes:</label>
-                <input type="number" id="max_participantes" name="max_participantes" class="form-control" value="<?php echo htmlspecialchars($evento['max_participantes']); ?>" min="1" required>
+                <label for="local" class="form-label">Local:</label>
+                <input type="text" id="local" name="local" class="form-control" value="<?php echo htmlspecialchars($evento->getLocal()); ?>" required>
+            </div>
+            <div class="mb-3">
+                <label for="duracao" class="form-label">Duração (em minutos):</label>
+                <input type="number" id="duracao" name="duracao" class="form-control" value="<?php echo htmlspecialchars($evento->getDuracao()); ?>" min="1" required>
+            </div>
+            <div class="mb-3">
+                <label for="categoria" class="form-label">Categoria:</label>
+                <input type="text" id="categoria" name="categoria" class="form-control" value="<?php echo htmlspecialchars($evento->getCategoria()); ?>" required>
+            </div>
+            <div class="mb-3">
+                <label for="preco" class="form-label">Preço:</label>
+                <input type="number" step="0.01" id="preco" name="preco" class="form-control" value="<?php echo htmlspecialchars($evento->getPreco()); ?>" required>
             </div>
 
             <button type="submit" class="btn btn-primary">Salvar Alterações</button>

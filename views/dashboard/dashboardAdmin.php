@@ -76,16 +76,16 @@ $eventos = $eventController->listEvents();
             <tbody>
                 <?php foreach ($eventos as $evento): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($evento['id']); ?></td>
-                        <td><?php echo htmlspecialchars($evento['nome']); ?></td>
-                        <td><?php echo htmlspecialchars($evento['data']); ?></td>
-                        <td><?php echo htmlspecialchars($evento['participantes']); ?></td>
-                        <td><?php echo htmlspecialchars($evento['max_participantes']); ?></td>
+                        <td><?php echo htmlspecialchars($evento->getId()); ?></td>
+                        <td><?php echo htmlspecialchars($evento->getTitulo()); ?></td>
+                        <td><?php echo htmlspecialchars($evento->getDataHora()); ?></td>
+                        <td><?php echo htmlspecialchars($evento->getParticipantes()); ?></td>
+                        <td><?php echo htmlspecialchars($evento->getCapacidade()); ?></td>
                         <td>
                             <div class="btn-group">
-                                <a href="/views/gerenciamentoEventos/Edit.php?id=<?php echo $evento['id']; ?>" class="btn btn-warning btn-sm">Editar</a>
-                                <a href="/views/gerenciamentoEventos/Details.php?id=<?php echo $evento['id']; ?>" class="btn btn-info btn-sm">Detalhes</a>
-                                <a href="/views/dashboard/dashboardAdmin.php?action=delete&id=<?php echo $evento['id']; ?>" class="btn btn-danger btn-sm">Excluir</a>
+                                <a href="/views/gerenciamentoEventos/Edit.php?id=<?php echo $evento->getId(); ?>" class="btn btn-warning btn-sm">Editar</a>
+                                <a href="/views/gerenciamentoEventos/Details.php?id=<?php echo $evento->getId(); ?>" class="btn btn-info btn-sm">Detalhes</a>
+                                <a href="/views/dashboard/dashboardAdmin.php?action=delete&id=<?php echo $evento->getId(); ?>" class="btn btn-danger btn-sm">Excluir</a>
                             </div>
                         </td>
                     </tr>

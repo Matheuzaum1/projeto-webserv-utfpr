@@ -22,12 +22,12 @@ class EventController {
             foreach ($eventos as $eventoData) {
                 $evento = new Evento(
                     $eventoData['id'],
-                    $eventoData['titulo'],
+                    $eventoData['nome'],
                     $eventoData['descricao'],
                     $eventoData['local'],
-                    $eventoData['data_hora'],
+                    $eventoData['data'],
                     $eventoData['duracao'],
-                    $eventoData['capacidade'],
+                    $eventoData['max_participantes'],
                     $eventoData['status'],
                     $eventoData['categoria'],
                     $eventoData['preco'],
@@ -57,12 +57,12 @@ class EventController {
 
             return new Evento(
                 $eventoData['id'],
-                $eventoData['titulo'],
+                $eventoData['nome'],
                 $eventoData['descricao'],
                 $eventoData['local'],
-                $eventoData['data_hora'],
+                $eventoData['data'],
                 $eventoData['duracao'],
-                $eventoData['capacidade'],
+                $eventoData['max_participantes'],
                 $eventoData['status'],
                 $eventoData['categoria'],
                 $eventoData['preco'],
@@ -168,5 +168,21 @@ class EventController {
         } catch (PDOException $e) {
             throw new Exception("Erro ao registrar usuário no evento: " . $e->getMessage());
         }
+    }
+
+    public function getEventosInscritosUsuario($usuarioId) {
+        $sql = "SELECT id_evento FROM inscricao WHERE id_usuario = :usuario_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':usuario_id', $usuarioId);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+    }
+
+    public function getNumeroInscritos($idEvento) {
+        $sql = "SELECT COUNT(*) as total FROM inscricao WHERE id_evento = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $idEvento);
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
     }
 }

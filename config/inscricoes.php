@@ -1,17 +1,13 @@
-<?php return array (
-  1 => 
-  array (
-    'usuario_id' => 3,
-    'evento_id' => '5',
-  ),
-  2 => 
-  array (
-    'usuario_id' => 3,
-    'evento_id' => '1',
-  ),
-  3 => 
-  array (
-    'usuario_id' => 3,
-    'evento_id' => '3',
-  ),
-);
+<?php
+// Arquivo de funções relacionadas às inscrições
+require_once __DIR__ . '/../database/Conexao.php';
+
+function buscarInscricoesPorUsuario($usuarioId) {
+    $con = Conexao::get();
+    $stmt = $con->prepare('SELECT * FROM inscricoes WHERE usuario_id = :usuario_id');
+    $stmt->bindParam(':usuario_id', $usuarioId, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Adicione outras funções relacionadas às inscrições conforme necessário.

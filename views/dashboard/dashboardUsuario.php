@@ -9,12 +9,16 @@ if (!isset($_SESSION['usuario']) || !in_array($_SESSION['usuario']['tipo'], ['us
 require_once __DIR__ . '/../../controllers/eventController.php';
 $eventController = new EventController();
 $eventos = $eventController->listEvents();
+$eventosInscritos = $eventController->getEventosInscritosUsuario($_SESSION['usuario']['id']);
 
-$inscricoes = require_once __DIR__ . '/../../config/inscricoes.php';
+// Removido require de inscricoes.php pois agora tudo é feito via banco de dados
+$inscricoes = [];
 
 $alerta = '';
 if (isset($_GET['success']) && $_GET['success'] === 'inscricao') {
     $alerta = '<div class="alert alert-success alert-dismissible fade show" role="alert">Inscrição realizada com sucesso!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+} elseif (isset($_GET['success']) && $_GET['success'] === 'desinscricao') {
+    $alerta = '<div class="alert alert-warning alert-dismissible fade show" role="alert">Você se desinscreveu do evento.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 } elseif (isset($_GET['info']) && $_GET['info'] === 'ja_inscrito') {
     $alerta = '<div class="alert alert-info alert-dismissible fade show" role="alert">Você já está inscrito neste evento.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 }
@@ -48,6 +52,17 @@ if (isset($_GET['success']) && $_GET['success'] === 'inscricao') {
     <div class="container mt-5">
         <h1 class="text-center">Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
         <?php echo $alerta; ?>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.alert .btn-close').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        var alert = btn.closest('.alert');
+                        if (alert) alert.remove();
+                    });
+                });
+            });
+        </script>
 
         <h2 class="mt-5">Eventos Disponíveis</h2>
 
@@ -89,30 +104,40 @@ if (isset($_GET['success']) && $_GET['success'] === 'inscricao') {
             <tbody>
                 <?php foreach ($eventos as $evento): ?>
                     <?php
-                    // Supondo que participantes é obtido do banco, mas se não for, ajuste conforme necessário
                     $vagasDisponiveis = $evento->getCapacidade() - $evento->getParticipantes();
-                    $usuarioJaInscrito = false;
-                    foreach ($inscricoes as $inscricao) {
-                        if ($inscricao['usuario_id'] === $_SESSION['usuario']['id'] && $inscricao['evento_id'] == $evento->getId()) {
-                            $usuarioJaInscrito = true;
-                            break;
-                        }
-                    }
+                    $usuarioJaInscrito = in_array($evento->getId(), $eventosInscritos);
                     $status = $usuarioJaInscrito ? 'inscrito' : ($vagasDisponiveis > 0 ? 'disponivel' : 'esgotado');
+                    $rowClass = '';
+                    if ($vagasDisponiveis <= 0) {
+                        $rowClass = $usuarioJaInscrito ? 'table-success' : 'table-danger';
+                    }
                     ?>
-                    <tr data-status="<?php echo $status; ?>">
-                        <td><?php echo htmlspecialchars($evento->getTitulo()); ?></td>
+                    <tr data-status="<?php echo $status; ?>" class="<?php echo $rowClass; ?>">
+                        <td>
+                            <a href="/views/gerenciamentoEventos/Details.php?id=<?php echo $evento->getId(); ?>" class="text-decoration-underline">
+                                <?php echo htmlspecialchars($evento->getTitulo()); ?>
+                            </a>
+                        </td>
                         <td><?php echo htmlspecialchars($evento->getDataHora()); ?></td>
                         <td><?php echo $vagasDisponiveis > 0 ? $vagasDisponiveis : 'Esgotado'; ?></td>
                         <td>
                             <?php if ($usuarioJaInscrito): ?>
-                                <button class="btn btn-success btn-sm" disabled>Já inscrito</button>
+                                <div class="d-flex align-items-center gap-2" style="min-width: 220px;">
+                                    <span class="badge bg-success">Inscrito</span>
+                                    <form method="POST" action="/controllers/inscricaoController.php?id=<?php echo htmlspecialchars($evento->getId()); ?>&action=cancelar" onsubmit="return confirm('Tem certeza que deseja se desinscrever deste evento?');">
+                                        <button type="submit" class="btn btn-danger btn-sm">Desinscrever-se</button>
+                                    </form>
+                                </div>
                             <?php elseif ($vagasDisponiveis > 0): ?>
-                                <form method="POST" action="/controllers/inscricaoController.php?id=<?php echo htmlspecialchars($evento->getId()); ?>" style="display: inline;">
-                                    <button type="submit" class="btn btn-primary btn-sm">Inscrever-se</button>
-                                </form>
+                                <div style="min-width: 220px;">
+                                    <form method="POST" action="/controllers/inscricaoController.php?id=<?php echo htmlspecialchars($evento->getId()); ?>" style="display: inline; width: 100%;">
+                                        <button type="submit" class="btn btn-primary btn-sm w-100">Inscrever-se</button>
+                                    </form>
+                                </div>
                             <?php else: ?>
-                                <button class="btn btn-secondary btn-sm" disabled>Esgotado</button>
+                                <div style="min-width: 220px;">
+                                    <button class="btn btn-secondary btn-sm w-100" disabled>Esgotado</button>
+                                </div>
                             <?php endif; ?>
                         </td>
                     </tr>
