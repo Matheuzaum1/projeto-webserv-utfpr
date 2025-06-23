@@ -4,21 +4,11 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
-    header('Location: /views/auth/login.php?erro=acesso_negado');
+    header('Location: /login?erro=acesso_negado');
     exit;
 }
 
-require_once __DIR__ . '/../../controllers/eventController.php';
-
-$eventController = new EventController();
-
-if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
-    $eventController->deleteEvent($_GET['id']);
-    header('Location: /views/dashboard/dashboardAdmin.php?success=evento_deletado');
-    exit;
-}
-
-$eventos = $eventController->listEvents();
+$eventos = []; // Inicializa a variável $eventos como um array vazio
 ?>
 
 <!DOCTYPE html>
@@ -32,13 +22,13 @@ $eventos = $eventController->listEvents();
 </head>
 <body>
     <?php include(__DIR__ . '/../common/Header.php'); ?>
+    <?php include(__DIR__ . '/../common/Alert.php'); ?>
 
     <div class="container mt-5">
         <h1 class="text-center">Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?>!</h1>
-        <?php include(__DIR__ . '/../common/Alert.php'); ?>
         <div class="d-flex justify-content-between align-items-center mt-4">
             <h2>Gerenciamento de Eventos</h2>
-            <a href="/views/gerenciamentoEventos/Create.php" class="btn btn-success">Criar Evento</a>
+            <a href="/criarEvento" class="btn btn-success">Criar Evento</a>
         </div>
 
         <div class="card mt-4" data-aos="fade-up">
@@ -50,10 +40,9 @@ $eventos = $eventController->listEvents();
                 </div>
                 <div class="col-md-6">
                     <label for="action" class="form-label">Ação:</label>
-                    <select id="action" name="action" class="form-select" required>
-                        <option value="/views/gerenciamentoEventos/Edit.php">Editar</option>
-                        <option value="/views/gerenciamentoEventos/Details.php">Detalhes</option>
-                        <option value="delete">Excluir</option>
+                    <select id="action" name="action" class="form-select" required>                        <option value="/editarEvento">Editar</option>
+                        <option value="/evento">Detalhes</option>
+                        <option value="/excluirEvento">Excluir</option>
                     </select>
                 </div>
                 <div class="col-12 text-center">
@@ -82,10 +71,9 @@ $eventos = $eventController->listEvents();
                         <td><?php echo htmlspecialchars($evento->getParticipantes()); ?></td>
                         <td><?php echo htmlspecialchars($evento->getCapacidade()); ?></td>
                         <td>
-                            <div class="btn-group">
-                                <a href="/views/gerenciamentoEventos/Edit.php?id=<?php echo $evento->getId(); ?>" class="btn btn-warning btn-sm">Editar</a>
-                                <a href="/views/gerenciamentoEventos/Details.php?id=<?php echo $evento->getId(); ?>" class="btn btn-info btn-sm">Detalhes</a>
-                                <a href="/views/dashboard/dashboardAdmin.php?action=delete&id=<?php echo $evento->getId(); ?>" class="btn btn-danger btn-sm">Excluir</a>
+                            <div class="btn-group">                                <a href="/editarEvento/<?php echo $evento->getId(); ?>" class="btn btn-warning btn-sm">Editar</a>
+                                <a href="/evento/<?php echo $evento->getId(); ?>" class="btn btn-info btn-sm">Detalhes</a>
+                                <a href="/excluirEvento/<?php echo $evento->getId(); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este evento?');">Excluir</a>
                             </div>
                         </td>
                     </tr>
@@ -99,15 +87,11 @@ $eventos = $eventController->listEvents();
         </div>
     </footer>
 </body>
-<script>
-    function handleAction(event) {
+<script>    function handleAction(event) {
         const action = document.getElementById('action').value;
         const eventId = document.getElementById('eventId').value;
-
-        if (action === 'delete') {
-            window.location.href = `/views/dashboard/dashboardAdmin.php?action=delete&id=${eventId}`;
-        } else {
-            window.location.href = `${action}?id=${eventId}`;
+        
+        window.location.href = `${action}/${eventId}`;
         }
 
         event.preventDefault();

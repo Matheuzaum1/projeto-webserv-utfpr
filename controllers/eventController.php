@@ -185,4 +185,49 @@ class EventController {
         $stmt->execute();
         return (int)$stmt->fetchColumn();
     }
+      // Métodos para exibir as views
+    public function showCreateEventForm() {
+        if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
+            header('Location: /login?erro=acesso_negado');
+            exit;
+        }
+        include __DIR__ . '/../views/gerenciamentoEventos/Create.php';
+    }
+    
+    public function showEventDetails() {
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            header('Location: /dashboard?erro=event_not_found');
+            exit;
+        }
+        include __DIR__ . '/../views/gerenciamentoEventos/Details.php';
+    }
+    
+    public function showMyEvents() {
+        if (!isset($_SESSION['usuario'])) {
+            header('Location: /login?erro=acesso_negado');
+            exit;
+        }
+        include __DIR__ . '/../views/eventos/meusEventos.php';
+    }
+    
+    public function showListaEventos() {
+        // Qualquer usuário pode ver a lista de eventos
+        include __DIR__ . '/../views/eventos/listaEventos.php';
+    }
+    
+    public function showEditEventForm() {
+        if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
+            header('Location: /login?erro=acesso_negado');
+            exit;
+        }
+        
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            header('Location: /admin?erro=event_not_found');
+            exit;
+        }
+        
+        include __DIR__ . '/../views/gerenciamentoEventos/Edit.php';
+    }
 }

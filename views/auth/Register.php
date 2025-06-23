@@ -4,28 +4,13 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (isset($_SESSION['usuario'])) {
-    header('Location: /views/dashboard/dashboardUsuario.php');
+    header('Location: /dashboard');
     exit;
-}
-
-require_once __DIR__ . '/../../controllers/authController.php';
-
-$authController = new AuthController();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nome = $_POST['nome'];
-    $email = $_POST['email'];
-    $senha = $_POST['senha'];
-
-    if ($authController->register()) {
-        header('Location: /views/auth/login.php?success=registrado');
-        exit;
-    } else {
-        $erro = 'Erro ao registrar. Tente novamente.';
-    }
 }
 ?>
 
+<?php include(__DIR__ . '/../common/Header.php'); ?>
+<?php include(__DIR__ . '/../common/Alert.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,11 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/public/css/style.css">
 </head>
-<body>
-    <div class="container mt-5">
+<body>    <div class="container mt-5">
         <h1 class="text-center">Registrar</h1>
-        <?php include(__DIR__ . '/../common/Alert.php'); ?>
-        <form method="POST" action="">
+        <form method="POST" action="/registerProcess">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome</label>
                 <input type="text" class="form-control" id="nome" name="nome" required>
@@ -52,22 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="senha" class="form-label">Senha</label>
                 <input type="password" class="form-control" id="senha" name="senha" required>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Tipo de perfil</label><br>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="tipo_usuario" id="participante" value="participante" checked>
-                    <label class="form-check-label" for="participante">Usuário</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="tipo_usuario" id="admin" value="admin">
-                    <label class="form-check-label" for="admin">Organizador</label>
-                </div>
-            </div>
             <button type="submit" class="btn btn-primary w-100">Registrar</button>
         </form>
         <p class="text-center mt-3">
-            Já tem uma conta? <a href="/views/auth/login.php">Faça login</a>
+            Já tem uma conta? <a href="/showLogin">Faça login</a>
         </p>
     </div>
 </body>
 </html>
+<?php include(__DIR__ . '/../common/Footer.php'); ?>

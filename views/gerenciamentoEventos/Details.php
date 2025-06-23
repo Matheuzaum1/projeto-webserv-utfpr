@@ -1,6 +1,7 @@
 <?php
-session_start();
-require_once __DIR__ . '/../../controllers/EventController.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $eventId = $_GET['id'] ?? null;
 $eventController = new EventController();
@@ -84,6 +85,7 @@ $status = $usuarioInscrito ? 'Inscrito' : ($vagasDisponiveis > 0 ? 'Disponível'
     </style>
 </head>
 <body>
+    <?php include(__DIR__ . '/../common/Header.php'); ?>
     <?php include(__DIR__ . '/../common/Alert.php'); ?>
     <div class="container">
         <div class="details-container shadow animated fade-in">
@@ -103,14 +105,14 @@ $status = $usuarioInscrito ? 'Inscrito' : ($vagasDisponiveis > 0 ? 'Disponível'
                 <?php if ($usuarioInscrito): ?>
                     <button class="btn btn-success btn-inscrever" disabled>Inscrito</button>
                 <?php elseif ($vagasDisponiveis > 0): ?>
-                    <form method="POST" action="/controllers/inscricaoController.php?id=<?php echo htmlspecialchars($evento->getId()); ?>" style="display: inline;">
+                    <form method="POST" action="/inscrever/<?php echo htmlspecialchars($evento->getId()); ?>" style="display: inline;">
                         <button type="submit" class="btn btn-primary btn-inscrever">Inscrever-se</button>
                     </form>
                 <?php else: ?>
                     <button class="btn btn-secondary btn-inscrever" disabled>Esgotado</button>
                 <?php endif; ?>
             <?php endif; ?>
-            <a href="/views/dashboard/dashboardUsuario.php" class="btn btn-outline-dark btn-back">Voltar</a>
+            <a href="/dashboard" class="btn btn-outline-dark btn-back">Voltar</a>
         </div>
     </div>
 </body>

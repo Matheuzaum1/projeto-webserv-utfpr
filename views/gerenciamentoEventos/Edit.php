@@ -1,11 +1,12 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
-    header('Location: /views/auth/login.php?erro=acesso_negado');
+    header('Location: /login?erro=acesso_negado');
     exit;
 }
-require_once __DIR__ . '/../../controllers/EventController.php';
 
 $eventId = $_GET['id'] ?? null;
 $eventController = new EventController();
@@ -40,8 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $max_participantes,
                 $categoria,
                 $preco
-            );
-            header('Location: /views/dashboard/dashboardAdmin.php?success=evento_atualizado');
+            );            header('Location: /admin?success=evento_atualizado');
             exit;
         } catch (Exception $e) {
             $erro = 'Erro ao atualizar o evento: ' . $e->getMessage();
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container mt-5">
         <h1 class="mb-4">Editar Evento</h1>
         <?php include(__DIR__ . '/../common/Alert.php'); ?>
-        <form method="POST" class="bg-light p-4 rounded shadow-sm">
+        <form method="POST" action="/atualizarEvento/<?php echo $evento->getId(); ?>" class="bg-light p-4 rounded shadow-sm">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome do Evento:</label>
                 <input type="text" id="nome" name="nome" class="form-control" value="<?php echo htmlspecialchars($evento->getTitulo()); ?>" required>
@@ -89,10 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="mb-3">
                 <label for="preco" class="form-label">Preço:</label>
                 <input type="number" step="0.01" id="preco" name="preco" class="form-control" value="<?php echo htmlspecialchars($evento->getPreco()); ?>" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-            <a href="/views/dashboard/dashboardAdmin.php" class="btn btn-secondary">Cancelar</a>
+            </div>            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            <a href="/admin" class="btn btn-secondary">Cancelar</a>
         </form>
     </div>
 </body>

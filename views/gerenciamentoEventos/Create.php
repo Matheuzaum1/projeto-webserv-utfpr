@@ -1,12 +1,12 @@
 <?php
-session_start();
-
-if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
-    header('Location: /views/auth/login.php?erro=acesso_negado');
-    exit;
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-require_once __DIR__ . '/../../controllers/EventController.php';
+if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
+    header('Location: /login?erro=acesso_negado');
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = trim($_POST['nome'] ?? '');
@@ -15,9 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($nome) && !empty($data) && $max_participantes > 0) {
         $eventController = new EventController();
-        try {
-            $eventController->createEvent($nome, $data, $max_participantes);
-            header('Location: /views/dashboard/dashboardAdmin.php?success=evento_criado');
+        try {            $eventController->createEvent($nome, $data, $max_participantes);
+            header('Location: /admin?success=evento_criado');
             exit;
         } catch (Exception $e) {
             $erro = 'Erro ao criar o evento: ' . $e->getMessage();
@@ -60,11 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body>
+    <?php include(__DIR__ . '/../common/Header.php'); ?>
     <div class="container">
         <div class="form-container mx-auto col-md-6">
             <h1>Criar Evento</h1>
-            <?php include(__DIR__ . '/../common/Alert.php'); ?>
-            <form method="POST" action="">
+            <?php include(__DIR__ . '/../common/Alert.php'); ?>            <form method="POST" action="/salvarEvento">
                 <div class="mb-3">
                     <label for="nome" class="form-label">Nome do Evento:</label>
                     <input type="text" id="nome" name="nome" class="form-control" required>
@@ -76,9 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mb-3">
                     <label for="max_participantes" class="form-label">Número Máximo de Participantes:</label>
                     <input type="number" id="max_participantes" name="max_participantes" class="form-control" min="1" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Criar</button>
-                <a href="/views/dashboard/dashboardAdmin.php" class="btn btn-secondary">Cancelar</a>
+                </div>                <button type="submit" class="btn btn-primary">Criar</button>
+                <a href="/admin" class="btn btn-secondary">Cancelar</a>
             </form>
         </div>
     </div>

@@ -31,9 +31,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <?php if (isset($_SESSION['usuario'])): ?>
-                        <li class="nav-item">
-                            <a href="/index.php?action=logout" class="logout-btn">Logout</a>
-                        </li>
+                        <div class="nav-user-info">
+                            <span>Bem-vindo, <?php echo htmlspecialchars($_SESSION['usuario']['nome']); ?></span>
+                            <a href="/logout" class="logout-btn">Logout</a>
+                        </div>
                     <?php else: ?>
                         <li class="nav-item"><a class="nav-link" href="/views/auth/login.php">Login</a></li>
                         <li class="nav-item"><a class="nav-link" href="/views/auth/register.php">Registrar</a></li>

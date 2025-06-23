@@ -1,78 +1,81 @@
 <?php
 require_once __DIR__ . '/eventController.php';
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-if (!isset($_SESSION['usuario'])) {
-    http_response_code(403);
-    echo "Acesso negado. Faça login para se inscrever.";
-    exit;
-}
-
-$usuarioId = $_SESSION['usuario']['id'];
-$eventoId = $_GET['id'] ?? null;
-
-if (!$eventoId) {
-    http_response_code(400);
-    echo "ID do evento não fornecido.";
-    exit;
-}
-
-$eventController = new EventController();
-$evento = $eventController->getEventById($eventoId);
-
-if (!$evento) {
-    http_response_code(404);
-    echo "Evento não encontrado.";
-    exit;
-}
-
-$inscricaoController = new InscricaoController($eventoId);
-$inscricoes = $inscricaoController->getAllInscricoes();
-
-if ($evento->getCapacidade() <= $inscricoes['total_inscricoes']){
-    http_response_code(403);
-    echo "Número máximo de participantes atingido.";
-    exit;
-}
-
-$action = $_GET['action'] ?? null;
-
-if ($action === 'cancelar') {
-    // Desinscrever usuário usando método público
-    $inscricaoController->cancelarInscricao($eventoId, $usuarioId);
-    header('Location: /views/dashboard/dashboardUsuario.php?success=desinscricao');
-    exit;
-}
-
-try{
-    $mensagem = $inscricaoController->registerUser($eventoId, $usuarioId);
-    header('Location: /views/dashboard/dashboardUsuario.php?success=inscricao');
-    exit;
-} catch (Exception $e) {
-    if (strpos($e->getMessage(), 'já está inscrito') !== false) {
-        header('Location: /views/dashboard/dashboardUsuario.php?info=ja_inscrito');
-        exit;
-    }
-    http_response_code(500);
-    echo "Erro ao se inscrever: " . $e->getMessage();
-}
+require_once __DIR__ . '/../database/Conexao.php';
 
 class InscricaoController {
-    private $conn, $idEvento;
+    private $conn;
 
-    public function __construct($idEvento) {
-        $this->idEvento = $idEvento;
+    public function __construct() {
         $this->conn = Conexao::get();
     }
+    
+    public function inscrever() {
+        if (!isset($_SESSION['usuario'])) {
+            header('Location: /index.php?action=showLogin&error=unauthorized');
+            exit;
+        }
 
-    public function getAllInscricoes() {
+        $usuarioId = $_SESSION['usuario']['id'];
+        $eventoId = $_GET['id'] ?? null;
+
+        if (!$eventoId) {
+            header('Location: /index.php?action=showDashboardUser&error=invalid_event');
+            exit;
+        }
+
+        try {
+            $eventController = new EventController();
+            $evento = $eventController->getEventById($eventoId);
+            
+            if (!$evento) {
+                header('Location: /index.php?action=showDashboardUser&error=event_not_found');
+                exit;
+            }
+            
+            $inscricoes = $this->getAllInscricoes($eventoId);
+            
+            $this->registerUser($eventoId, $usuarioId);
+            header('Location: /index.php?action=showDashboardUser&success=inscricao');
+            exit;
+        } catch (Exception $e) {
+            if (strpos($e->getMessage(), 'já está inscrito') !== false) {
+                header('Location: /index.php?action=showDashboardUser&info=ja_inscrito');
+                exit;
+            }
+            header('Location: /index.php?action=showDashboardUser&error=inscricao_failed');
+            exit;
+        }
+    }
+
+    public function cancelarInscricao() {
+        if (!isset($_SESSION['usuario'])) {
+            header('Location: /index.php?action=showLogin&error=unauthorized');
+            exit;
+        }
+
+        $usuarioId = $_SESSION['usuario']['id'];
+        $eventoId = $_GET['id'] ?? null;
+
+        if (!$eventoId) {
+            header('Location: /index.php?action=showDashboardUser&error=invalid_event');
+            exit;
+        }
+
+        try {
+            $this->cancelarInscricaoEvento($eventoId, $usuarioId);
+            header('Location: /index.php?action=showDashboardUser&success=desinscricao');
+            exit;
+        } catch (Exception $e) {
+            header('Location: /index.php?action=showDashboardUser&error=cancelamento_failed');
+            exit;
+        }
+    }
+
+    public function getAllInscricoes($idEvento) {
         try{
             $query = "SELECT COUNT(id_evento) as total_inscricoes FROM inscricao WHERE id_evento = :id_evento";
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':id_evento', $this->idEvento);
+            $stmt->bindParam(':id_evento', $idEvento);
             $stmt->execute();
 
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -126,7 +129,7 @@ class InscricaoController {
         }
     }
 
-    public function cancelarInscricao($eventoId, $usuarioId) {
+    public function cancelarInscricaoEvento($eventoId, $usuarioId) {
         $sql = "DELETE FROM inscricao WHERE id_evento = :id_evento AND id_usuario = :id_usuario";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id_evento', $eventoId);

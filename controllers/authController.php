@@ -25,14 +25,12 @@ class AuthController {
     public function login() {
         try {
             $email = trim($_POST['email'] ?? '');
-            $senha = trim($_POST['senha'] ?? '');
-
-            if (empty($email) || empty($senha)) {
-                header('Location: /views/auth/login.php?erro=campos_vazios');
+            $senha = trim($_POST['senha'] ?? '');            if (empty($email) || empty($senha)) {
+                header('Location: /login?erro=campos_vazios');
                 exit;
             }
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                header('Location: /views/auth/login.php?erro=email_invalido');
+                header('Location: /login?erro=email_invalido');
                 exit;
             }
 
@@ -40,15 +38,13 @@ class AuthController {
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':email', $email);
             $stmt->execute();
-            $usuarioData = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if (!$usuarioData) {
-                header('Location: /views/auth/login.php?erro=usuario_nao_encontrado');
+            $usuarioData = $stmt->fetch(PDO::FETCH_ASSOC);            if (!$usuarioData) {
+                header('Location: /login?erro=usuario_nao_encontrado');
                 exit;
             }
 
             if (!password_verify($senha, $usuarioData['senha'])) {
-                header('Location: /views/auth/login.php?erro=senha_incorreta');
+                header('Location: /login?erro=senha_incorreta');
                 exit;
             }
 
@@ -59,12 +55,10 @@ class AuthController {
                 'tipo' => $usuarioData['tipo_usuario']
             ];
 
-            setcookie('user_token', base64_encode(json_encode($_SESSION['usuario'])), time() + (86400 * 30), '/', '', isset($_SERVER['HTTPS']), true);
-
-            if ($usuarioData['tipo_usuario'] === 'admin') {
-                header('Location: /views/dashboard/dashboardAdmin.php');
+            setcookie('user_token', base64_encode(json_encode($_SESSION['usuario'])), time() + (86400 * 30), '/', '', isset($_SERVER['HTTPS']), true);            if ($usuarioData['tipo_usuario'] === 'admin') {
+                header('Location: /admin');
             } else {
-                header('Location: /views/dashboard/dashboardUsuario.php');
+                header('Location: /dashboard');
             }
             exit;
         } catch (PDOException $e) {
@@ -77,22 +71,20 @@ class AuthController {
             $nome = trim($_POST['nome'] ?? '');
             $email = trim($_POST['email'] ?? '');
             $senha = trim($_POST['senha'] ?? '');
-            $tipo_usuario = $_POST['tipo_usuario'] ?? 'participante';
-
-            if (empty($nome) || empty($email) || empty($senha)) {
-                header('Location: /views/auth/register.php?erro=campos_vazios');
+            $tipo_usuario = $_POST['tipo_usuario'] ?? 'participante';            if (empty($nome) || empty($email) || empty($senha)) {
+                header('Location: /register?erro=campos_vazios');
                 exit;
             }
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                header('Location: /views/auth/register.php?erro=email_invalido');
+                header('Location: /register?erro=email_invalido');
                 exit;
             }
             if (strlen($senha) < 6) {
-                header('Location: /views/auth/register.php?erro=senha_curta');
+                header('Location: /register?erro=senha_curta');
                 exit;
             }
             if (strlen($nome) < 3) {
-                header('Location: /views/auth/register.php?erro=nome_curto');
+                header('Location: /register?erro=nome_curto');
                 exit;
             }
             if (!in_array($tipo_usuario, ['admin', 'participante'])) {
@@ -102,10 +94,8 @@ class AuthController {
             $sqlVerifica = "SELECT * FROM usuario WHERE email = :email";
             $stmtVerifica = $this->conn->prepare($sqlVerifica);
             $stmtVerifica->bindParam(':email', $email);
-            $stmtVerifica->execute();
-
-            if ($stmtVerifica->rowCount() > 0) {
-                header('Location: /views/auth/register.php?erro=email_ja_cadastrado');
+            $stmtVerifica->execute();            if ($stmtVerifica->rowCount() > 0) {
+                header('Location: /register?erro=email_ja_cadastrado');
                 exit;
             }
 
@@ -114,12 +104,11 @@ class AuthController {
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':nome', $nome);
             $stmt->bindParam(':email', $email);
-            $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
-            $stmt->bindParam(':senha', $senhaHash);
+            $senhaHash = password_hash($senha, PASSWORD_DEFAULT);            $stmt->bindParam(':senha', $senhaHash);
             $stmt->bindParam(':tipo_usuario', $tipo_usuario);
             $stmt->execute();
-
-            header('Location: /views/auth/login.php?success=usuario_cadastrado');
+            
+            header('Location: /login?success=usuario_cadastrado');
             exit;
         } catch (PDOException $e) {
             throw new Exception("Erro ao registrar usuário: " . $e->getMessage());
@@ -130,12 +119,34 @@ class AuthController {
         try {
             setcookie('user_token', '', time() - 3600, '/', '', isset($_SERVER['HTTPS']), true);
 
-            session_destroy();
-
-            header('Location: /views/auth/login.php');
+            session_destroy();            header('Location: /login');
             exit;
         } catch (Exception $e) {
             throw new Exception("Erro ao realizar logout: " . $e->getMessage());
         }
+    }
+
+    // Métodos para exibir as views
+    public function showLoginForm() {
+        include __DIR__ . '/../views/auth/Login.php';
+    }
+    
+    public function showRegisterForm() {
+        include __DIR__ . '/../views/auth/Register.php';
+    }
+      public function showDashboardAdmin() {
+        if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'admin') {
+            header('Location: /login?erro=acesso_negado');
+            exit;
+        }
+        include __DIR__ . '/../views/dashboard/dashboardAdmin.php';
+    }
+    
+    public function showDashboardUser() {
+        if (!isset($_SESSION['usuario'])) {
+            header('Location: /login?erro=acesso_negado');
+            exit;
+        }
+        include __DIR__ . '/../views/dashboard/dashboardUsuario.php';
     }
 }

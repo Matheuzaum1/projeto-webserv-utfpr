@@ -1,52 +1,5 @@
 <?php include(__DIR__ . '/../common/Header.php'); ?>
-
-<?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-if (isset($_SESSION['usuario'])) {
-    header('Location: /views/dashboard/dashboardUsuario.php');
-    exit;
-}
-
-require_once __DIR__ . '/../../controllers/authController.php';
-
-$authController = new AuthController();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
-    $senha = $_POST['senha'];
-
-    if ($authController->login()) {
-        header('Location: /views/dashboard/dashboardUsuario.php');
-        exit;
-    } else {
-        $erro = 'Credenciais inválidas. Tente novamente.';
-    }
-}
-
-if (isset($_GET['erro'])) {
-    switch ($_GET['erro']) {
-        case 'acesso_negado':
-            $erro = 'Você não tem permissão para acessar esta página. Faça login primeiro.';
-            break;
-        case 'campos_vazios':
-            $erro = 'Preencha todos os campos.';
-            break;
-        case 'senha_incorreta':
-            $erro = 'Senha incorreta. Tente novamente.';
-            break;
-        case 'usuario_nao_encontrado':
-            $erro = 'Usuário não encontrado.';
-            break;
-        default:
-            $erro = 'Ocorreu um erro. Tente novamente.';
-            break;
-    }
-}
-?>
-
+<?php include(__DIR__ . '/../common/Alert.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,23 +10,14 @@ if (isset($_GET['erro'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="/public/css/style.css">
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            margin: 0;
-        }
-        main {
-            flex: 1;
-        }
+        body { display: flex; flex-direction: column; min-height: 100vh; margin: 0; }
+        main { flex: 1; }
     </style>
 </head>
 <body>
-<main>
-    <div class="container mt-5">
+<main>    <div class="container mt-5">
         <h1 class="text-center">Login</h1>
-        <?php include(__DIR__ . '/../common/Alert.php'); ?>
-        <form method="POST" action="">
+        <form method="POST" action="/loginProcess">
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email" required>
@@ -85,11 +29,10 @@ if (isset($_GET['erro'])) {
             <button type="submit" class="btn btn-primary w-100">Entrar</button>
         </form>
         <p class="text-center mt-3">
-            Não tem uma conta? <a href="/views/auth/register.php">Registre-se</a>
+            Não tem uma conta? <a href="/showRegister">Registre-se</a>
         </p>
     </div>
 </main>
 </body>
 </html>
-
 <?php include(__DIR__ . '/../common/Footer.php'); ?>

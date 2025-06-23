@@ -1,8 +1,10 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (!isset($_SESSION['usuario']) || !in_array($_SESSION['usuario']['tipo'], ['usuario', 'participante'])) {
-    header('Location: /views/auth/login.php?erro=acesso_negado');
+    header('Location: /login?erro=acesso_negado');
     exit;
 }
 
@@ -152,7 +154,7 @@ if (isset($_GET['success']) && $_GET['success'] === 'inscricao') {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a href="/index.php?action=logout" class="btn btn-danger" tabindex="0">Logout</a>
+                        <a href="/logout" class="btn btn-danger" tabindex="0">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -256,7 +258,7 @@ if (isset($_GET['success']) && $_GET['success'] === 'inscricao') {
                     ?>
                     <tr data-status="<?php echo $status; ?>" class="<?php echo $rowClass; ?>">
                         <td>
-                            <a href="/views/gerenciamentoEventos/Details.php?id=<?php echo $evento->getId(); ?>" class="text-decoration-underline" tabindex="0" aria-label="Detalhes do evento <?php echo htmlspecialchars($evento->getTitulo() ?? ''); ?>">
+                            <a href="/showEventDetails/<?php echo $evento->getId(); ?>" class="text-decoration-underline" tabindex="0" aria-label="Detalhes do evento <?php echo htmlspecialchars($evento->getTitulo() ?? ''); ?>">
                                 <?php echo htmlspecialchars($evento->getTitulo() ?? ''); ?>
                             </a>
                         </td>
@@ -266,13 +268,13 @@ if (isset($_GET['success']) && $_GET['success'] === 'inscricao') {
                             <?php if ($usuarioJaInscrito): ?>
                                 <div class="d-flex align-items-center gap-2" style="min-width: 220px;">
                                     <span class="badge bg-success">Inscrito</span>
-                                    <form method="POST" action="/controllers/inscricaoController.php?id=<?php echo htmlspecialchars($evento->getId()); ?>&action=cancelar" onsubmit="return confirm('Tem certeza que deseja se desinscrever deste evento?');">
+                                    <form method="POST" action="/cancelarInscricao/<?php echo htmlspecialchars($evento->getId()); ?>" onsubmit="return confirm('Tem certeza que deseja se desinscrever deste evento?');">
                                         <button type="submit" class="btn btn-danger btn-sm" aria-label="Desinscrever-se do evento <?php echo htmlspecialchars($evento->getTitulo() ?? ''); ?>">Desinscrever-se</button>
                                     </form>
                                 </div>
                             <?php elseif ($vagasDisponiveis > 0): ?>
                                 <div style="min-width: 220px;">
-                                    <form method="POST" action="/controllers/inscricaoController.php?id=<?php echo htmlspecialchars($evento->getId()); ?>" style="display: inline; width: 100%;">
+                                    <form method="POST" action="/inscrever/<?php echo htmlspecialchars($evento->getId()); ?>" style="display: inline; width: 100%;">
                                         <button type="submit" class="btn btn-primary btn-sm w-100" aria-label="Inscrever-se no evento <?php echo htmlspecialchars($evento->getTitulo() ?? ''); ?>">Inscrever-se</button>
                                     </form>
                                 </div>
