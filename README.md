@@ -39,10 +39,5 @@ Este sistema utiliza **PHP 8+** e segue uma arquitetura baseada em **MVC Básico
 
 ## 🚀 Como Instalar e Rodar o Projeto
 
-### 1. Instruções de Instalação
-
-As etapas detalhadas para instalação e configuração do ambiente estão no documento:
-**[Link direto para o arquivo de instalação]**
-
 ```markdown
 Leia o arquivo **`docs/instalacao.md`** para o passo-a-passo completo.
