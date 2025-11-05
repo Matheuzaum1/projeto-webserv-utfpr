@@ -1,76 +1,48 @@
-# Projeto Web UTFPR 
- 
-Sistema de gerenciamento de eventos desenvolvido para o projeto de extensão da UTFPR. 
- 
-## Integrantes do Grupo 
-<<<<<<< HEAD
-- Matheus Henrique Rosendo Medeiros (RA 2605970)
-- Lucas Daniel da Silva (RA 2605953) 
-=======
-- Matheus Henrique Rosendo Medeiros
-- Lucas Daniel da Silva
->>>>>>> main
- 
-## Descrição 
-Este sistema web permite o cadastro, edição e gerenciamento de eventos, utilizando PHP 8+, seguindo o padrão MVC básico. 
- 
-## Funcionalidades 
-- Autenticação de usuários (login/logout) 
-- Cadastro e listagem de eventos 
-- Inscrição de usuários em eventos 
-- Área administrativa para gerenciar eventos 
- 
-## Tecnologias Utilizadas 
-- PHP 8+ 
-- MySQL ou MariaDB (Nao implementado ainda)
-- HTML5, CSS3 
-- (Opcional: Bootstrap para estilização) 
- 
-## Particularidades do Projeto 
-- **Bugs conhecidos**: Nenhum no momento. 
-- **Funcionalidades faltantes**: Nenhuma prevista. 
-- **Observações**: Sistema utiliza sessão para autenticação. 
- 
-## Como Instalar 
-Leia o arquivo `docs/instalacao.md` para ver os passos de instalação e configuração. 
- 
-## Organização do Projeto 
-- `controllers/`: Contém os controladores responsáveis pela lógica do sistema.
-- `models/`: Contém os modelos que representam os dados e regras de negócio.
-- `views/`: Contém as visualizações (arquivos HTML e PHP).
-- `public/`: Arquivos acessíveis pelo navegador (index.php, css, js).
-- `config/`: Arquivos de configuração.
-- `README.md`: Este arquivo.
-- `.gitignore`: Arquivos e pastas ignorados no repositório.
+# 💻 Projeto Web: Sistema de Gerenciamento de Eventos (UTFPR)
 
-## Pré-requisitos para funcionamento básico
-- PHP 8.0 ou superior
-- MySQL/MariaDB
-- Extensão PDO habilitada no PHP
-- Composer (opcional, para dependências)
+**[Badge de Status: Ex: Em Desenvolvimento/Concluído]**
+**[Badge de Licença: Ex: MIT License]**
+**[Badge de Versão PHP: Ex: PHP v8.0+]**
 
-## Configuração da conexão com o banco de dados
-O arquivo `config/config.php` deve conter as informações corretas de acesso ao banco:
+Um **Sistema Web Completo para Gerenciamento e Inscrição em Eventos**, desenvolvido como projeto de extensão na **Universidade Tecnológica Federal do Paraná (UTFPR)**.
 
-```php
-// ...existing code...
-define('DB_SERVER', 'localhost');
-define('DB_USERNAME', 'root');
-define('DB_PASSWORD', '');
-define('DB_DATABASE', 'projeto_web');
-// ...existing code...
-```
+---
 
-A string de conexão já está configurada para usar UTF-8:
-```php
-$conn = new PDO("mysql:host=".DB_SERVER.";dbname=".DB_DATABASE.";charset=utf8", DB_USERNAME, DB_PASSWORD);
-```
+## ✨ Recursos Principais
 
-## Corrigindo textos corrompidos dos eventos
-Se os títulos dos eventos estiverem com caracteres estranhos, rode o script SQL abaixo no seu banco de dados para corrigir:
+Este sistema utiliza **PHP 8+** e segue uma arquitetura baseada em **MVC Básico**, permitindo o controle total sobre o ciclo de vida dos eventos.
 
-```sql
-source scripts/fix_event_titles.sql;
-```
+* 🔐 **Autenticação Segura**: Login e Logout de usuários, utilizando **Sessões** para gerenciamento de estado.
+* 📅 **Gerenciamento de Eventos**: Cadastro, edição, listagem e visualização detalhada de eventos.
+* 📝 **Inscrições de Usuários**: Funcionalidade para que usuários registrados possam se inscrever em eventos.
+* 🛡️ **Área Administrativa**: Interface dedicada para gerenciamento e moderação de todos os eventos e usuários.
 
-Ou copie e cole o conteúdo do arquivo `scripts/fix_event_titles.sql` no seu cliente MySQL/phpMyAdmin.
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+| Categoria | Tecnologia | Versão Mínima | Descrição |
+| :--- | :--- | :--- | :--- |
+| **Backend** | PHP | 8.0+ | Linguagem de programação principal. |
+| **Banco de Dados** | MySQL ou MariaDB | - | Armazenamento de dados e regras de negócio. |
+| **Frontend** | HTML5 / CSS3 | - | Estrutura e estilização da interface. |
+| **Opcional** | Bootstrap | - | Framework para agilizar o desenvolvimento responsivo (se utilizado). |
+
+**Pré-requisitos de Ambiente:**
+
+* **PHP 8.0** ou superior.
+* **MySQL/MariaDB** (Servidor de Banco de Dados).
+* Extensão **PDO** habilitada no PHP.
+* **Composer** (Recomendado para gerenciamento futuro de dependências).
+
+---
+
+## 🚀 Como Instalar e Rodar o Projeto
+
+### 1. Instruções de Instalação
+
+As etapas detalhadas para instalação e configuração do ambiente estão no documento:
+**[Link direto para o arquivo de instalação]**
+
+```markdown
+Leia o arquivo **`docs/instalacao.md`** para o passo-a-passo completo.
